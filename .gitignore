@@ -57,3 +57,19 @@ Thumbs.db
 *.log
 *.tmp
 *.bak
+
+
+# Local evaluation data and generated reports
+# Keep private resume/job-description datasets and reviewer worksheets out of Git.
+data/private/
+data/raw/
+data/processed/
+datasets/private/
+datasets/raw/
+datasets/processed/
+*.resume.csv
+*resume_dataset*.csv
+*job_description_dataset*.csv
+*annotation_export*.csv
+reports/
+!reports/.gitkeep
