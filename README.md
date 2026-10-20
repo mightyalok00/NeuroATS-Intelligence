@@ -22,6 +22,7 @@ NeuroATS Intelligence helps candidates and recruiters inspect resume structure, 
 - [Overview](#overview)
 - [Key capabilities](#key-capabilities)
 - [How it works](#how-it-works)
+- [Algorithm reference](#algorithm-reference)
 - [Technology stack](#technology-stack)
 - [Getting started](#getting-started)
 - [Tests](#tests)
@@ -90,6 +91,10 @@ flowchart TD
 The ATS-style score is a configurable, deterministic rubric with weighted dimensions such as contact details, structure, action verbs, quantified impact, technical skills, readability, and length. It should be interpreted as **resume feedback**, not as a hiring probability or a guarantee of compatibility with a commercial applicant-tracking system.
 
 Job-fit outputs combine text similarity and skill overlap. They can be affected by synonyms, missing context, formatting, and the completeness of the skill taxonomy. Where available, inspect the matched terms and evidence rather than relying on a single aggregate number.
+
+## Algorithm reference
+
+The implementation uses established techniques for lexical retrieval, text similarity, sentence ranking, and configurable resume-quality scoring. For readable formulas, assumptions, interpretation guidance, and evaluation caveats, see **[Algorithm Notes](docs/ALGORITHMS.md)**. The equations describe general algorithm families; they should not be interpreted as benchmark results or proof of model performance.
 
 ## Technology stack
 
