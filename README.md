@@ -4,7 +4,7 @@
 [![Python](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.14-blue.svg)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.40+-FF4B4B.svg)](https://streamlit.io/)
 [![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-1.4+-F7931E.svg)](https://scikit-learn.org/)
-[![Status](https://img.shields.io/badge/Status-10%2F10%20Production%20Ready-brightgreen.svg)](https://github.com/mightyalok00/NeuroATS-Intelligence)
+[![CI](https://github.com/mightyalok00/NeuroATS-Intelligence/actions/workflows/ci.yml/badge.svg)](https://github.com/mightyalok00/NeuroATS-Intelligence/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > 🚀 **Live Demo**: [https://neuroats-intelligence.streamlit.app/](https://neuroats-intelligence.streamlit.app/)
@@ -146,6 +146,8 @@ Execute the automated test suite verifying all 11 ML components:
 ```bash
 python -m unittest tests/test_pipeline.py
 ```
+
+The repository also runs its unit tests in GitHub Actions. See [Evaluation, Fairness, and Limitations](docs/EVALUATION_AND_FAIRNESS.md) for the benchmark protocol, reporting expectations, and responsible-use guidance.
 
 ---
 
