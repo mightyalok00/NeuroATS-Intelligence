@@ -109,6 +109,14 @@ python -m benchmarks.evaluate_ranking
 
 The benchmark uses a small, manually labelled illustrative corpus to verify ranking-metric calculation and provide a reproducible baseline for the lexical retrieval component. It is **not** a real-world resume-ranking benchmark and must not be presented as evidence of hiring accuracy, fairness, or generalization.
 
+For an **authorized external dataset**, the optional harness compares keyword overlap, BM25, and TF-IDF and reports MRR, Recall@k, NDCG@k, and per-query misses. It expects a CSV with columns `query_id, query_text, document_id, candidate_id, document_text, relevance, split`, where `relevance` is `0` or `1` and `split` is `train`, `dev`, or `test`. It rejects candidate IDs appearing in multiple splits and duplicate query/document pairs.
+
+```bash
+python -m benchmarks.evaluate_external_dataset --input /path/to/authorized_dataset.csv --k 5 --output reports/external_ranking_evaluation.md
+```
+
+The script does not download or supply a dataset. Obtain data-use permission first, keep private data out of Git and CI, and follow [the external evaluation protocol](docs/REAL_WORLD_EVALUATION.md). The [blinded annotation worksheet](docs/ANNOTATION_WORKSHEET.csv) is a blank template, not completed human review. See the [fairness audit template](docs/FAIRNESS_AUDIT_TEMPLATE.md) and [operational validation checklist](docs/OPERATIONAL_VALIDATION.md). These plans do not establish real-world accuracy, fairness, or production readiness.
+
 See the [CI workflow](https://github.com/mightyalok00/NeuroATS-Intelligence/actions/workflows/ci.yml) for automated checks.
 
 ## Evaluation, fairness, and privacy
