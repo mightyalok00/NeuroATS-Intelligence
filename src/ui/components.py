@@ -26,8 +26,10 @@ def render_header(title: str, subtitle: str, version: str):
     <div class="app-header-container">
         <div style="display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap;">
             <div class="brand-title">{title} <span class="version-tag">v{version}</span></div>
-            <div style="font-size:0.8rem; color:#94A3B8; font-family:'JetBrains Mono', monospace;">
-                🟢 100% Offline Core ML • 0 API Dependencies
+            <div style="font-size:0.8rem; color:#94A3B8; font-family:'JetBrains Mono', monospace; display:flex; align-items:center; gap:10px;">
+                <span>🟢 100% Offline Core ML</span>
+                <span>•</span>
+                <a href="https://neuroats-intelligence.streamlit.app/" target="_blank" style="color:#818CF8; text-decoration:none; font-weight:600;">🌐 Live Cloud Demo</a>
             </div>
         </div>
         <div class="brand-subtitle">{subtitle}</div>

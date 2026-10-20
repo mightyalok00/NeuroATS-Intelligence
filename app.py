@@ -224,6 +224,8 @@ with st.sidebar:
     st.markdown("---")
     st.markdown("#### 🔒 System Capabilities")
     st.caption("• **100% Offline Core ML**\n• **Zero External API Fees**\n• **PDF & DOCX Support**\n• **Recruiter Batch Leaderboard**\n• **BM25 Okapi & PageRank TextRank**")
+    st.markdown("🌐 **Live App:** [neuroats-intelligence.streamlit.app](https://neuroats-intelligence.streamlit.app/)")
+    st.markdown("⭐ **GitHub:** [mightyalok00/NeuroATS-Intelligence](https://github.com/mightyalok00/NeuroATS-Intelligence)")
 
 
 # ---------------------------------------------------------

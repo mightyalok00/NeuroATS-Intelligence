@@ -5,6 +5,8 @@ System Configurations, Rubrics, and Taxonomy Dictionaries
 APP_TITLE = "NeuroATS Intelligence Platform"
 APP_SUBTITLE = "Local-First AI & Machine Learning Engine for ATS Analytics, Candidate Ranking & Adaptive Q&A"
 VERSION = "2.1.0"
+APP_URL = "https://neuroats-intelligence.streamlit.app/"
+REPO_URL = "https://github.com/mightyalok00/NeuroATS-Intelligence"
 
 # Domains recognized by the Supervised Domain Classifier
 DOMAINS = [
