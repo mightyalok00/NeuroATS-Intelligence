@@ -147,6 +147,8 @@ Execute the automated test suite verifying all 11 ML components:
 python -m unittest tests/test_pipeline.py
 ```
 
+The repository also runs its unit tests in GitHub Actions. See [Evaluation, Fairness, and Limitations](docs/EVALUATION_AND_FAIRNESS.md) for the benchmark protocol, reporting expectations, and responsible-use guidance.
+
 ---
 
 ## 📊 Feature Highlights
