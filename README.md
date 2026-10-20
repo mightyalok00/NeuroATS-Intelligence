@@ -21,10 +21,12 @@ Traditional RAG systems (like the original `Adaptive-Rag`) have significant limi
 **NeuroATS-Intelligence** transforms this architecture into an **interpretable, high-performance Machine Learning & NLP pipeline**:
 
 - **0 External API Keys Needed**: 100% free, runs completely offline on your local CPU/GPU.
+- **📤 One-Click Direct Resume Upload**: Drag-and-drop `.pdf`, `.docx`, or `.txt` resumes directly on the main dashboard with instant offline AI analysis.
+- **🎛️ Dynamic Pipeline Filters & Cutoffs**: Set custom passing ATS thresholds, target domain specialization, and filter skills by taxonomy family.
 - **✨ One-Click AI Resume Tailor**: Weaves missing role skills and power action verbs into your resume, previewing score jumps and exporting to `.docx`.
 - **✉️ Algorithmic Cover Letter Generator**: Synthesizes a structured 3-part cover letter linking candidate achievements to company requirements, exportable to `.docx`.
 - **📈 ML Seniority Estimator & Career Roadmap**: Predicts candidate engineering tier (Junior to Principal), benchmarks market salary bands, and outlines next-tier promotion milestones.
-- **Multi-Resume Batch Leaderboard**: Evaluate and rank 2 to 10 candidates simultaneously with a 4-quadrant scatter matrix.
+- **Multi-Resume Batch Leaderboard**: Evaluate and rank 2 to 10 candidates simultaneously with a 4-quadrant scatter matrix and recruiter candidate filtering.
 - **Real-Time Live Bullet Optimizer**: Interactive reactive sandbox to draft and boost bullet points using the Google XYZ formula.
 - **Universal Document Support**: Native parsing for `.pdf`, `.docx`, and `.txt` documents.
 - **Offline Model Serialization**: Pre-compiled `.joblib` model artifacts decoupled from runtime inference.
