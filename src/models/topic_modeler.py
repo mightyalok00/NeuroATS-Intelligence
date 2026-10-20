@@ -5,7 +5,7 @@ Uses Latent Dirichlet Allocation (LDA) and NMF to discover latent skill themes.
 
 from typing import Any
 
-from sklearn.decomposition import LatentDirichletAllocation, NMF
+from sklearn.decomposition import NMF, LatentDirichletAllocation
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 
 

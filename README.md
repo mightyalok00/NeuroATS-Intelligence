@@ -72,7 +72,7 @@ flowchart TD
 ---
 
 ## 🧮 Mathematical Formulations of Core Algorithms
- 
+
 ### 1. BM25 Okapi Relevance Ranking
 
 Used for exact factual extraction from candidate resumes without LLM hallucination:

@@ -3,9 +3,9 @@ from .preprocessor import ResumePreprocessor
 from .skill_taxonomy import SKILL_TAXONOMY, extract_skills_from_text
 
 __all__ = [
+    "SKILL_TAXONOMY",
     "ResumeParser",
     "ResumePreprocessor",
-    "SKILL_TAXONOMY",
     "extract_skills_from_text",
 ]
 

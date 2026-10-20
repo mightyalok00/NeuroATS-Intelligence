@@ -4,14 +4,15 @@ Predicts professional engineering tier, market compensation bands, and growth mi
 """
 
 import re
-from typing import Dict, List, Tuple
+from typing import Any, ClassVar
+
 from src.config import POWER_ACTION_VERBS
 
 
 class SeniorityEstimator:
     """Estimates career seniority level, compensation benchmark, and career advancement roadmap."""
 
-    SALARY_BANDS = {
+    SALARY_BANDS: ClassVar[dict[str, dict[str, str]]] = {
         "Machine Learning & AI": {
             "Junior": "$115,000 - $145,000",
             "Mid-Level": "$145,000 - $185,000",
@@ -42,7 +43,7 @@ class SeniorityEstimator:
         }
     }
 
-    CAREER_ROADMAPS = {
+    CAREER_ROADMAPS: ClassVar[dict[str, dict[str, Any]]] = {
         "Junior": {
             "next_level": "Mid-Level Engineer",
             "technical_milestones": [
@@ -97,8 +98,8 @@ class SeniorityEstimator:
         cls,
         resume_text: str,
         predicted_domain: str,
-        bullet_analysis: Dict[str, any]
-    ) -> Dict[str, any]:
+        bullet_analysis: dict[str, any]
+    ) -> dict[str, any]:
         """
         Estimate seniority level, compensation benchmark, and career advancement roadmap.
         """

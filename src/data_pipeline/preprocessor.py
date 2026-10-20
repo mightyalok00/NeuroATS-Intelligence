@@ -3,9 +3,8 @@ Text Preprocessor and Stylistic Feature Extraction Pipeline
 Analyzes readability, action verb density, quantifiable metrics, and bullet strength.
 """
 
-import math
 import re
-from typing import Dict, List, Set, Tuple
+
 from src.config import ALL_ACTION_VERBS, POWER_ACTION_VERBS
 
 
@@ -25,12 +24,12 @@ class ResumePreprocessor:
         return text.strip()
 
     @classmethod
-    def tokenize_words(cls, text: str) -> List[str]:
+    def tokenize_words(cls, text: str) -> list[str]:
         """Simple word tokenizer without punctuation."""
         return re.findall(r"\b[a-zA-Z0-9_\-+#.]+\b", text.lower())
 
     @classmethod
-    def calculate_readability(cls, text: str) -> Dict[str, float]:
+    def calculate_readability(cls, text: str) -> dict[str, float]:
         """
         Calculate Flesch Reading Ease and Flesch-Kincaid Grade Level.
         Formula:
@@ -75,7 +74,7 @@ class ResumePreprocessor:
         }
 
     @classmethod
-    def analyze_bullets(cls, bullets: List[str]) -> Dict[str, any]:
+    def analyze_bullets(cls, bullets: list[str]) -> dict[str, any]:
         """
         Audit bullet points for:
         1. Starting with power action verbs
@@ -95,8 +94,8 @@ class ResumePreprocessor:
 
         action_verb_count = 0
         quantifiable_count = 0
-        verb_category_breakdown: Dict[str, int] = {k: 0 for k in POWER_ACTION_VERBS}
-        bullet_details: List[Dict] = []
+        verb_category_breakdown: dict[str, int] = {k: 0 for k in POWER_ACTION_VERBS}
+        bullet_details: list[dict] = []
 
         for bullet in bullets:
             words = bullet.split()

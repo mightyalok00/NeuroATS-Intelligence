@@ -30,7 +30,7 @@ class DenseEmbedder:
                 from sentence_transformers import SentenceTransformer
                 # Load with local cache or download once
                 DenseEmbedder._st_model = SentenceTransformer(self.model_name)
-            except Exception:
+            except Exception:  # noqa: BLE001
                 DenseEmbedder._st_model = None
 
     def encode(self, texts: list[str]) -> np.ndarray:
@@ -48,7 +48,7 @@ class DenseEmbedder:
                     normalize_embeddings=True
                 )
                 return embeddings
-            except Exception:
+            except Exception:  # noqa: BLE001, S110
                 pass
 
         # Robust, high-speed pure ML Fallback: LSA (TF-IDF + TruncatedSVD)

@@ -5,9 +5,9 @@ Extracts raw text, contact information, structural sections, and bullet points.
 
 import io
 import re
-from typing import ClassVar
 import xml.etree.ElementTree as ET
 import zipfile
+from typing import ClassVar
 
 import docx
 import pypdf
@@ -67,7 +67,7 @@ class ResumeParser:
                 if extracted:
                     text_pages.append(extracted)
             return "\n\n".join(text_pages)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             return f"Error extracting PDF: {e!s}"
 
     @classmethod
@@ -85,7 +85,7 @@ class ResumeParser:
                         paragraphs.append(row_text)
                         
             return "\n\n".join(paragraphs)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             # Fallback to direct XML extraction if docx fails
             try:
                 with zipfile.ZipFile(io.BytesIO(file_bytes)) as z:
@@ -93,7 +93,7 @@ class ResumeParser:
                     tree = ET.fromstring(xml_content)
                     texts = [node.text for node in tree.iter() if node.text]
                     return " ".join(texts)
-            except Exception as xml_e:
+            except Exception as xml_e:  # noqa: BLE001
                 return f"Error extracting DOCX: {e!s} / {xml_e!s}"
 
     @classmethod

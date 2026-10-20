@@ -3,7 +3,7 @@ Modular UI Components for AdaptiveML Enterprise Streamlit Application
 """
 
 import json
-from typing import Dict, List, Optional
+
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -11,7 +11,6 @@ import streamlit as st
 
 from src.algorithms.ats_scorer import ATSScorer
 from src.algorithms.cover_letter import CoverLetterGenerator
-from src.algorithms.matcher import JobFitMatcher
 from src.algorithms.seniority_estimator import SeniorityEstimator
 from src.algorithms.tailor import ResumeTailor
 from src.config import POWER_ACTION_VERBS
@@ -36,7 +35,7 @@ def render_header(title: str, subtitle: str, version: str):
     """, unsafe_allow_html=True)
 
 
-def render_kpis(ats_eval: Dict, fit_eval: Dict, domain_eval: Dict, bullet_eval: Dict):
+def render_kpis(ats_eval: dict, fit_eval: dict, domain_eval: dict, bullet_eval: dict):
     """Render high-signal KPI metrics cards."""
     col1, col2, col3, col4 = st.columns(4)
 
@@ -77,7 +76,7 @@ def render_kpis(ats_eval: Dict, fit_eval: Dict, domain_eval: Dict, bullet_eval: 
         """, unsafe_allow_html=True)
 
 
-def render_tab_ats(ats_evaluation: Dict, contact_info: Dict, readability: Dict, bullet_analysis: Dict):
+def render_tab_ats(ats_evaluation: dict, contact_info: dict, readability: dict, bullet_analysis: dict):
     """Render ATS Compliance Audit with Radar Chart and Bullet Audit."""
     st.markdown('<div class="view-heading">📊 ATS Multi-Dimensional Compliance Audit</div>', unsafe_allow_html=True)
     st.markdown('<div class="view-sub">Deterministic 7-pillar evaluation matching recruiter applicant tracking benchmarks.</div>', unsafe_allow_html=True)
@@ -96,19 +95,19 @@ def render_tab_ats(ats_evaluation: Dict, contact_info: Dict, readability: Dict, 
             theta=categories + [categories[0]],
             fill='toself',
             fillcolor='rgba(99, 102, 241, 0.22)',
-            line=dict(color='#818CF8', width=2),
+            line={"color": '#818CF8', "width": 2},
             name='Score %'
         ))
         fig_radar.update_layout(
-            polar=dict(
-                radialaxis=dict(visible=True, range=[0, 100], color="#94A3B8"),
-                angularaxis=dict(color="#F8FAFC")
-            ),
+            polar={
+                "radialaxis": {"visible": True, "range": [0, 100], "color": "#94A3B8"},
+                "angularaxis": {"color": "#F8FAFC"}
+            },
             showlegend=False,
             paper_bgcolor='rgba(0,0,0,0)',
             plot_bgcolor='rgba(0,0,0,0)',
             height=360,
-            margin=dict(l=40, r=40, t=25, b=25)
+            margin={"l": 40, "r": 40, "t": 25, "b": 25}
         )
         st.plotly_chart(fig_radar, use_container_width=True)
 
@@ -154,7 +153,7 @@ def render_tab_ats(ats_evaluation: Dict, contact_info: Dict, readability: Dict, 
         st.dataframe(bullet_df, use_container_width=True)
 
 
-def render_tab_match(fit_analysis: Dict):
+def render_tab_match(fit_analysis: dict):
     """Render Job Fit Match and Skill Gap Breakdown."""
     st.markdown('<div class="view-heading">🎯 Job Description Fit & Skill Gap Analyzer</div>', unsafe_allow_html=True)
     st.markdown('<div class="view-sub">Synthesizes dense semantic similarity, TF-IDF lexical match, and skill taxonomy overlap.</div>', unsafe_allow_html=True)
@@ -198,7 +197,7 @@ def render_tab_match(fit_analysis: Dict):
         st.write("• Resume covers primary keyword vocabulary from the posting.")
 
 
-def render_tab_tailor(resume_text: str, fit_analysis: Dict, candidate_name: str):
+def render_tab_tailor(resume_text: str, fit_analysis: dict, candidate_name: str):
     """Render One-Click AI Resume Tailor and DOCX Generator."""
     st.markdown('<div class="view-heading">✨ One-Click AI Resume Tailor & DOCX Exporter</div>', unsafe_allow_html=True)
     st.markdown('<div class="view-sub">Weaves target role competencies and action verbs into your resume to maximize ATS callback rates.</div>', unsafe_allow_html=True)
@@ -244,7 +243,7 @@ def render_tab_tailor(resume_text: str, fit_analysis: Dict, candidate_name: str)
     st.text_area("Output Preview:", value=tailored_data["tailored_text"], height=320)
 
 
-def render_tab_cover(candidate_name: str, contact_info: Dict, target_role_title: str, job_text: str, bullets: List[str], matched_skills: List[str], summarizer):
+def render_tab_cover(candidate_name: str, contact_info: dict, target_role_title: str, job_text: str, bullets: list[str], matched_skills: list[str], summarizer):
     """Render Algorithmic Cover Letter Generator."""
     st.markdown('<div class="view-heading">✉️ Algorithmic Tailored Cover Letter Generator</div>', unsafe_allow_html=True)
     st.markdown('<div class="view-sub">Synthesizes a structured 3-part cover letter connecting candidate achievements to company requirements.</div>', unsafe_allow_html=True)
@@ -283,7 +282,7 @@ def render_tab_cover(candidate_name: str, contact_info: Dict, target_role_title:
     st.text_area("Cover Letter Editor:", value=letter_text, height=360)
 
 
-def render_tab_seniority(resume_text: str, predicted_domain: str, bullet_analysis: Dict):
+def render_tab_seniority(resume_text: str, predicted_domain: str, bullet_analysis: dict):
     """Render Seniority Estimator and Career Progression Roadmap."""
     st.markdown('<div class="view-heading">📈 ML Seniority Estimator & Career Progression Roadmap</div>', unsafe_allow_html=True)
     st.markdown('<div class="view-sub">Predicts candidate engineering tier, benchmarks market base compensation, and reveals milestones for next-level promotions.</div>', unsafe_allow_html=True)
@@ -336,7 +335,7 @@ def render_tab_seniority(resume_text: str, predicted_domain: str, bullet_analysi
             st.success(f"• {ms}")
 
 
-def render_tab_batch(job_description: str, ml_stack: Dict):
+def render_tab_batch(job_description: str, ml_stack: dict):
     """Render Recruiter Multi-Resume Batch Leaderboard."""
     st.markdown('<div class="view-heading">👥 Recruiter Multi-Resume Batch Leaderboard</div>', unsafe_allow_html=True)
     st.markdown('<div class="view-sub">Evaluate and rank multiple candidate resumes simultaneously against target role criteria.</div>', unsafe_allow_html=True)
@@ -425,18 +424,18 @@ def render_tab_batch(job_description: str, ml_stack: Dict):
             },
             title="Candidate Decision Matrix: Job Fit % vs ATS Score"
         )
-        fig_scatter.update_traces(textposition="top center", marker=dict(line=dict(width=1, color="#FFFFFF")))
+        fig_scatter.update_traces(textposition="top center", marker={"line": {"width": 1, "color": "#FFFFFF"}})
         fig_scatter.update_layout(
             paper_bgcolor='rgba(0,0,0,0)',
             plot_bgcolor='rgba(0,0,0,0)',
-            xaxis=dict(range=[20, 105], title="ATS Score (0-100)"),
-            yaxis=dict(range=[20, 105], title="Job Description Fit %"),
+            xaxis={"range": [20, 105], "title": "ATS Score (0-100)"},
+            yaxis={"range": [20, 105], "title": "Job Description Fit %"},
             height=400
         )
         st.plotly_chart(fig_scatter, use_container_width=True)
 
 
-def render_tab_optimizer(bullets: List[str]):
+def render_tab_optimizer(bullets: list[str]):
     """Render Real-Time Live Bullet Point Optimizer."""
     st.markdown('<div class="view-heading">✍️ Interactive Live Bullet Point Optimizer</div>', unsafe_allow_html=True)
     st.markdown('<div class="view-sub">Draft or refine your experience bullet points in real-time. Watch your strength score, action verbs, and quantifiable metrics update instantly.</div>', unsafe_allow_html=True)
@@ -574,7 +573,7 @@ def render_tab_qa(resume_text: str, job_description: str, qa_engine):
                         st.write(f"• *\"{snip}\"*")
 
 
-def render_tab_ml_explorer(resume_text: str, bullets: List[str], domain_prediction: Dict, ml_stack: Dict):
+def render_tab_ml_explorer(resume_text: str, bullets: list[str], domain_prediction: dict, ml_stack: dict):
     """Render Mathematical Diagnostics and Feature Visualizations."""
     st.markdown('<div class="view-heading">🧠 Machine Learning Pipelines & Mathematical Diagnostics</div>', unsafe_allow_html=True)
     st.markdown('<div class="view-sub">Inspect the algorithmic representations, feature distributions, and supervised/unsupervised models.</div>', unsafe_allow_html=True)
@@ -594,7 +593,7 @@ def render_tab_ml_explorer(resume_text: str, bullets: List[str], domain_predicti
             color="Probability (%)",
             color_continuous_scale="Purples"
         )
-        fig_bar.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=300, margin=dict(l=20, r=20, t=10, b=10))
+        fig_bar.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=300, margin={"l": 20, "r": 20, "t": 10, "b": 10})
         st.plotly_chart(fig_bar, use_container_width=True)
 
     with c2:
@@ -610,7 +609,7 @@ def render_tab_ml_explorer(resume_text: str, bullets: List[str], domain_predicti
                 color="TF-IDF Weight",
                 color_continuous_scale="Teal"
             )
-            fig_tfidf.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=300, margin=dict(l=20, r=20, t=10, b=10))
+            fig_tfidf.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=300, margin={"l": 20, "r": 20, "t": 10, "b": 10})
             st.plotly_chart(fig_tfidf, use_container_width=True)
 
     st.markdown("---")
@@ -635,7 +634,7 @@ def render_tab_ml_explorer(resume_text: str, bullets: List[str], domain_predicti
                     st.write(f"• {b}")
 
 
-def render_tab_export(contact_info: Dict, domain_prediction: Dict, ats_evaluation: Dict, seniority_info: Dict, readability: Dict, bullet_analysis: Dict, fit_analysis: Dict, skills: Dict, job_mode: str):
+def render_tab_export(contact_info: dict, domain_prediction: dict, ats_evaluation: dict, seniority_info: dict, readability: dict, bullet_analysis: dict, fit_analysis: dict, skills: dict, job_mode: str):
     """Render Exportable Comprehensive Markdown and JSON Audit."""
     st.markdown('<div class="view-heading">📑 Full Candidate Audit & Diagnostic Report</div>', unsafe_allow_html=True)
     st.markdown('<div class="view-sub">Export exhaustive audit logs for recruitment files, candidate reviews, and ATS compliance documentation.</div>', unsafe_allow_html=True)
