@@ -38,3 +38,6 @@ jobs:
 
       - name: Run unit tests
         run: python -m unittest discover -s tests -p "test_*.py" -v
+
+      - name: Run illustrative BM25 ranking benchmark
+        run: python -m benchmarks.evaluate_ranking
