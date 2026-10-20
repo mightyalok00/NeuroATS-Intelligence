@@ -1,4 +1,4 @@
-# 🧠 AdaptiveML Resume & Document Intelligence Platform
+# 🧠 NeuroATS-Intelligence Platform
 
 [![Python](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.14-blue.svg)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.40+-FF4B4B.svg)](https://streamlit.io/)
@@ -6,7 +6,7 @@
 [![Status](https://img.shields.io/badge/Status-10%2F10%20Production%20Ready-brightgreen.svg)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> **A 100% Free, Local-First, Zero-LLM AI & Machine Learning Platform** that replaces naive, costly RAG with deterministic, mathematically sound machine learning algorithms, NLP feature engineering, unsupervised topic modeling, and supervised classification pipelines.
+> **A 100% Free, Local-First, Zero-LLM AI & Machine Learning Platform** for enterprise ATS analytics, recruiter batch candidate ranking, real-time bullet point optimization, and career intelligence. Replaces costly black-box RAG with deterministic, mathematically sound machine learning algorithms, NLP feature engineering, unsupervised topic modeling, and supervised classification pipelines.
 
 ---
 
@@ -17,7 +17,7 @@ Traditional RAG systems (like the original `Adaptive-Rag`) have significant limi
 2. **Hallucination Risk**: LLMs often generate inaccurate claims when evaluating candidate resumes or matching job requirements.
 3. **Black-Box Metrics**: They cannot explain *why* an ATS score was given or calculate deterministic, reproducible gap matrices.
 
-**AdaptiveML** transforms this architecture into an **interpretable, high-performance Machine Learning & NLP pipeline**:
+**NeuroATS-Intelligence** transforms this architecture into an **interpretable, high-performance Machine Learning & NLP pipeline**:
 - **0 External API Keys Needed**: 100% free, runs completely offline on your local CPU/GPU.
 - **✨ One-Click AI Resume Tailor**: Weaves missing role skills and power action verbs into your resume, previewing score jumps and exporting to `.docx`.
 - **✉️ Algorithmic Cover Letter Generator**: Synthesizes a structured 3-part cover letter linking candidate achievements to company requirements, exportable to `.docx`.
@@ -96,6 +96,8 @@ $$\text{ATS Score} = w_1 S_{\text{contact}} + w_2 S_{\text{structure}} + w_3 S_{
 ### 1. Installation
 Clone the repository and install requirements:
 ```bash
+git clone https://github.com/mightyalok00/NeuroATS-Intelligence.git
+cd NeuroATS-Intelligence
 pip install -r requirements.txt
 ```
 

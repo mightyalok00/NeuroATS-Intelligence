@@ -45,7 +45,7 @@ from src.ui import (
 # Page Configuration & CSS Injection
 # ---------------------------------------------------------
 st.set_page_config(
-    page_title="AdaptiveML Resume & ATS Intelligence",
+    page_title="NeuroATS Intelligence",
     page_icon="🧠",
     layout="wide",
     initial_sidebar_state="expanded"
