@@ -39,5 +39,12 @@ jobs:
       - name: Run unit tests
         run: python -m unittest discover -s tests -p "test_*.py" -v
 
-      - name: Run illustrative BM25 ranking benchmark
-        run: python -m benchmarks.evaluate_ranking
+      - name: Run ranking evaluation and generate report
+        run: python -m benchmarks.evaluate_ranking --output reports/ranking_evaluation.md
+
+      - name: Upload ranking evaluation report
+        uses: actions/upload-artifact@v4
+        with:
+          name: ranking-evaluation-report
+          path: reports/ranking_evaluation.md
+          if-no-files-found: error
