@@ -16,6 +16,13 @@ def sample_rows():
     ]
 
 
+def write_rows(path, rows):
+    with path.open("w", newline="", encoding="utf-8") as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
+        writer.writeheader()
+        writer.writerows(rows)
+
+
 class TestExternalBenchmark(unittest.TestCase):
     def test_evaluation_returns_all_baselines_and_bounded_metrics(self):
         result = evaluate_rows(sample_rows(), k=2)
@@ -31,16 +38,22 @@ class TestExternalBenchmark(unittest.TestCase):
         rows = sample_rows()
         rows[0]["candidate_id"] = "same-candidate"
         rows[-1]["candidate_id"] = "same-candidate"
-        with self.assertRaisesRegex(ValueError, "Candidate leakage"):
-            evaluate_rows(rows)
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = Path(temp_dir) / "dataset.csv"
+            write_rows(path, rows)
+            with self.assertRaisesRegex(ValueError, "Candidate leakage"):
+                load_rows(path)
 
     def test_rejects_duplicate_query_document_pairs(self):
         rows = sample_rows()
         rows.append(dict(rows[0]))
-        with self.assertRaisesRegex(ValueError, "duplicate query_id/document_id"):
-            evaluate_rows(rows)
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = Path(temp_dir) / "dataset.csv"
+            write_rows(path, rows)
+            with self.assertRaisesRegex(ValueError, "duplicate query_id/document_id"):
+                load_rows(path)
 
-    def test_load_rows_requires_schema_and_writes_no_data(self):
+    def test_load_rows_requires_schema(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             path = Path(temp_dir) / "dataset.csv"
             with path.open("w", newline="", encoding="utf-8") as stream:
