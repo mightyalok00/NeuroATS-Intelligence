@@ -1,4 +1,5 @@
 from .components import (
+    render_filter_banner,
     render_header,
     render_kpis,
     render_tab_ats,
@@ -16,6 +17,7 @@ from .styles import ENTERPRISE_CSS
 
 __all__ = [
     "ENTERPRISE_CSS",
+    "render_filter_banner",
     "render_header",
     "render_kpis",
     "render_tab_ats",
@@ -27,5 +29,5 @@ __all__ = [
     "render_tab_optimizer",
     "render_tab_qa",
     "render_tab_seniority",
-    "render_tab_tailor"
+    "render_tab_tailor",
 ]

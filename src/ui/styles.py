@@ -167,5 +167,55 @@ ENTERPRISE_CSS = """
         font-family: var(--font-mono);
         margin-bottom: 14px;
     }
+
+    /* Interactive Filter Bar & Status Badges */
+    .filter-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+        background: rgba(30, 41, 59, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 10px 18px;
+        margin-bottom: 1.4rem;
+    }
+    .filter-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .filter-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 12px;
+        border-radius: 9999px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        font-family: var(--font-mono);
+    }
+    .filter-pill-green {
+        background: rgba(16, 185, 129, 0.15);
+        border: 1px solid rgba(16, 185, 129, 0.4);
+        color: #6EE7B7;
+    }
+    .filter-pill-amber {
+        background: rgba(245, 158, 11, 0.15);
+        border: 1px solid rgba(245, 158, 11, 0.4);
+        color: #FCD34D;
+    }
+    .filter-pill-indigo {
+        background: rgba(99, 102, 241, 0.15);
+        border: 1px solid rgba(99, 102, 241, 0.4);
+        color: #C7D2FE;
+    }
+    .filter-pill-purple {
+        background: rgba(168, 85, 247, 0.15);
+        border: 1px solid rgba(168, 85, 247, 0.4);
+        color: #D8B4FE;
+    }
 </style>
 """

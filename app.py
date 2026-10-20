@@ -16,7 +16,7 @@ from src.algorithms.text_rank import TextRankSummarizer
 from src.config import APP_SUBTITLE, APP_TITLE, VERSION
 from src.data_pipeline.parser import ResumeParser
 from src.data_pipeline.preprocessor import ResumePreprocessor
-from src.data_pipeline.skill_taxonomy import extract_skills_from_text
+from src.data_pipeline.skill_taxonomy import SKILL_TAXONOMY, extract_skills_from_text
 from src.feature_engineering.embeddings import DenseEmbedder
 from src.feature_engineering.vectorizers import TFIDFEngine
 from src.models.cluster_engine import ExperienceClusterEngine
@@ -26,6 +26,7 @@ from src.models.topic_modeler import TopicModeler
 from src.sample_data import SAMPLE_JOB_DESCRIPTIONS, SAMPLE_RESUMES
 from src.ui import (
     ENTERPRISE_CSS,
+    render_filter_banner,
     render_header,
     render_kpis,
     render_tab_ats,
@@ -156,6 +157,36 @@ with st.sidebar:
         )
 
     st.markdown("---")
+    st.markdown("### 🎛️ Pipeline Filters & Cutoffs")
+    with st.expander("Scoring & Taxonomy Filters", expanded=True):
+        min_ats_threshold = st.slider(
+            "Target Passing ATS Cutoff:",
+            min_value=50,
+            max_value=95,
+            value=75,
+            step=5,
+            help="Sets the target threshold for compliance pass/fail indicator."
+        )
+        domain_filter = st.selectbox(
+            "Target Domain Focus:",
+            ["All Tech Domains", "Machine Learning & AI", "Full-Stack & Backend", "DevOps & Cloud Infrastructure", "Data Engineering & Analytics"],
+            index=0,
+            help="Benchmarks candidate alignment against the selected engineering discipline."
+        )
+        all_taxonomies = list(SKILL_TAXONOMY.keys())
+        selected_taxonomies = st.multiselect(
+            "Filter Skill Taxonomy Families:",
+            options=all_taxonomies,
+            default=all_taxonomies,
+            help="Isolate technical skills by domain/family."
+        )
+        keyword_search = st.text_input(
+            "Quick Keyword Search Filter:",
+            placeholder="e.g. PyTorch, Docker, React",
+            help="Highlight and filter terms across candidate profile."
+        )
+
+    st.markdown("---")
     st.markdown("#### 🔒 System Capabilities")
     st.caption("• **100% Offline Core ML**\n• **Zero External API Fees**\n• **PDF & DOCX Support**\n• **Recruiter Batch Leaderboard**\n• **BM25 Okapi & PageRank TextRank**")
 
@@ -170,11 +201,18 @@ skills = extract_skills_from_text(resume_text)
 readability = ResumePreprocessor.calculate_readability(resume_text)
 bullet_analysis = ResumePreprocessor.analyze_bullets(bullets)
 
+filtered_skills = {
+    cat: s_list for cat, s_list in skills.items()
+    if cat in selected_taxonomies
+}
+total_skills_count = sum(len(v) for v in skills.values())
+filtered_skills_count = sum(len(v) for v in filtered_skills.values())
+
 ats_evaluation = ATSScorer.evaluate(
     contact_info=contact_info,
     sections=sections,
     bullet_analysis=bullet_analysis,
-    skills_by_category=skills,
+    skills_by_category=filtered_skills if filtered_skills else skills,
     readability=readability
 )
 
@@ -188,7 +226,7 @@ seniority_info = SeniorityEstimator.estimate_seniority(
 
 
 # ---------------------------------------------------------
-# Brand Header & Top KPI Metric Cards
+# Brand Header, Top KPI Metric Cards & Active Filter Banner
 # ---------------------------------------------------------
 render_header(title=APP_TITLE, subtitle=APP_SUBTITLE, version=VERSION)
 render_kpis(
@@ -196,6 +234,15 @@ render_kpis(
     fit_eval=fit_analysis,
     domain_eval=domain_prediction,
     bullet_eval=bullet_analysis
+)
+render_filter_banner(
+    ats_score=ats_evaluation["total_score"],
+    threshold=min_ats_threshold,
+    domain_pred=domain_prediction["predicted_domain"],
+    target_domain=domain_filter,
+    total_skills_count=total_skills_count,
+    filtered_skills_count=filtered_skills_count,
+    keyword_filter=keyword_search.strip()
 )
 
 

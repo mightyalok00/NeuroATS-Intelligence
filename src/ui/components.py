@@ -35,6 +35,45 @@ def render_header(title: str, subtitle: str, version: str):
     """, unsafe_allow_html=True)
 
 
+def render_filter_banner(
+    ats_score: float,
+    threshold: int,
+    domain_pred: str,
+    target_domain: str,
+    total_skills_count: int,
+    filtered_skills_count: int,
+    keyword_filter: str = ""
+):
+    """Render interactive Glassmorphism filter and compliance summary banner."""
+    pts_diff = round(ats_score - threshold, 1)
+    if pts_diff >= 0:
+        threshold_badge = f'<div class="filter-pill filter-pill-green">🟢 PASSES CUTOFF (+{pts_diff} pts above {threshold})</div>'
+    else:
+        threshold_badge = f'<div class="filter-pill filter-pill-amber">⚠️ BELOW CUTOFF ({pts_diff} pts below {threshold})</div>'
+
+    if target_domain in ("All Tech Domains", "All Domains") or domain_pred.lower() in target_domain.lower():
+        domain_badge = f'<div class="filter-pill filter-pill-indigo">🎯 Domain: {domain_pred}</div>'
+    else:
+        domain_badge = f'<div class="filter-pill filter-pill-amber">🔄 Domain Shift: {domain_pred} ➔ {target_domain}</div>'
+
+    skill_badge = f'<div class="filter-pill filter-pill-purple">⚡ Active Skills: {filtered_skills_count}/{total_skills_count}</div>'
+    search_badge = f'<div class="filter-pill filter-pill-indigo">🔍 Filter: "{keyword_filter}"</div>' if keyword_filter else ""
+
+    st.markdown(f"""
+    <div class="filter-container">
+        <div style="font-size:0.85rem; font-weight:700; color:#F8FAFC; display:flex; align-items:center; gap:8px;">
+            <span>🎛️ Active Pipeline Filters</span>
+        </div>
+        <div class="filter-group">
+            {threshold_badge}
+            {domain_badge}
+            {skill_badge}
+            {search_badge}
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+
 def render_kpis(ats_eval: dict, fit_eval: dict, domain_eval: dict, bullet_eval: dict):
     """Render high-signal KPI metrics cards."""
     col1, col2, col3, col4 = st.columns(4)
@@ -169,32 +208,60 @@ def render_tab_match(fit_analysis: dict):
         st.metric("Lexical TF-IDF Match", f"{fit_analysis['lexical_score']}%")
 
     st.markdown("---")
+    
+    # Real-Time In-Tab Skill Filter
+    search_col1, search_col2 = st.columns([2.5, 1])
+    with search_col1:
+        match_filter = st.text_input(
+            "🔍 Filter Skills & Requirements:",
+            placeholder="Search matched or missing skills in real-time (e.g. Python, AWS, Docker)...",
+            key="match_tab_filter"
+        )
+    with search_col2:
+        filter_scope = st.selectbox(
+            "Filter Category Scope:",
+            ["All Overlap", "Only Matched Skills", "Only Missing Skills"],
+            key="match_filter_scope"
+        )
+
+    matched_display = fit_analysis['matched_skills']
+    missing_display = fit_analysis['missing_skills']
+    keywords_display = fit_analysis.get("priority_missing_keywords", [])
+
+    if match_filter.strip():
+        q = match_filter.strip().lower()
+        matched_display = [s for s in matched_display if q in s.lower()]
+        missing_display = [s for s in missing_display if q in s.lower()]
+        keywords_display = [kw for kw in keywords_display if q in kw.lower()]
+
     col_matched, col_missing = st.columns(2)
 
     with col_matched:
-        st.markdown(f"#### ✅ Matched Required Skills ({len(fit_analysis['matched_skills'])})")
-        if fit_analysis['matched_skills']:
-            pills = "".join([f'<span class="badge-pill badge-matched">{s}</span>' for s in fit_analysis['matched_skills']])
-            st.markdown(pills, unsafe_allow_html=True)
-        else:
-            st.info("No exact skill overlap detected.")
+        if filter_scope in ("All Overlap", "Only Matched Skills"):
+            st.markdown(f"#### ✅ Matched Required Skills ({len(matched_display)})")
+            if matched_display:
+                pills = "".join([f'<span class="badge-pill badge-matched">{s}</span>' for s in matched_display])
+                st.markdown(pills, unsafe_allow_html=True)
+            else:
+                st.info("No matching skills found for current filter.")
 
     with col_missing:
-        st.markdown(f"#### ⚠️ Missing Skills Required by Role ({len(fit_analysis['missing_skills'])})")
-        if fit_analysis['missing_skills']:
-            pills = "".join([f'<span class="badge-pill badge-missing">{s}</span>' for s in fit_analysis['missing_skills']])
-            st.markdown(pills, unsafe_allow_html=True)
-        else:
-            st.success("No missing required skills! Candidate covers all primary requirements.")
+        if filter_scope in ("All Overlap", "Only Missing Skills"):
+            st.markdown(f"#### ⚠️ Missing Skills Required by Role ({len(missing_display)})")
+            if missing_display:
+                pills = "".join([f'<span class="badge-pill badge-missing">{s}</span>' for s in missing_display])
+                st.markdown(pills, unsafe_allow_html=True)
+            else:
+                st.success("No missing required skills matching filter!")
 
     st.markdown("---")
     st.markdown("#### 🎯 Priority Keywords to Add to Pass ATS Filters")
     st.caption("Top TF-IDF weighted terms in the Job Description absent from the resume:")
-    if fit_analysis["priority_missing_keywords"]:
-        kw_html = "".join([f'<span class="badge-pill badge-keyword">{kw}</span>' for kw in fit_analysis["priority_missing_keywords"]])
+    if keywords_display:
+        kw_html = "".join([f'<span class="badge-pill badge-keyword">{kw}</span>' for kw in keywords_display])
         st.markdown(kw_html, unsafe_allow_html=True)
     else:
-        st.write("• Resume covers primary keyword vocabulary from the posting.")
+        st.write("• Resume covers primary keyword vocabulary or filtered terms.")
 
 
 def render_tab_tailor(resume_text: str, fit_analysis: dict, candidate_name: str):
@@ -402,14 +469,43 @@ def render_tab_batch(job_description: str, ml_stack: dict):
         leaderboard_df.index = leaderboard_df.index + 1
         leaderboard_df.index.name = "Rank"
 
-        st.markdown("### 🏆 Candidate Rankings")
-        st.dataframe(
-            leaderboard_df[["Candidate", "Domain", "Composite Fit %", "ATS Score", "Matched Skills", "Missing Skills", "Recommendation"]],
-            use_container_width=True
-        )
+        # Interactive Recruiter Filter Bar
+        st.markdown("#### 🎛️ Recruiter Candidate Filtering & Search")
+        f_col1, f_col2, f_col3 = st.columns(3)
+        with f_col1:
+            available_domains = ["All Domains", *sorted(set(leaderboard_df["Domain"]))]
+            filter_domain = st.selectbox("Filter by Domain:", available_domains, key="batch_filter_domain")
+        with f_col2:
+            filter_min_fit = st.slider("Min Composite Fit %:", 0, 100, 0, 5, key="batch_filter_min_fit")
+        with f_col3:
+            filter_search = st.text_input("Search Candidate or Skill:", placeholder="e.g. PyTorch, Marcus, Lead", key="batch_filter_search")
+
+        filtered_df = leaderboard_df.copy()
+        if filter_domain != "All Domains":
+            filtered_df = filtered_df[filtered_df["Domain"] == filter_domain]
+        if filter_min_fit > 0:
+            filtered_df = filtered_df[filtered_df["Composite Fit %"] >= filter_min_fit]
+        if filter_search.strip():
+            q = filter_search.strip().lower()
+            filtered_df = filtered_df[
+                filtered_df["Candidate"].str.lower().str.contains(q) |
+                filtered_df["Top Skills Matched"].str.lower().str.contains(q) |
+                filtered_df["Domain"].str.lower().str.contains(q)
+            ]
+
+        st.markdown(f"### 🏆 Filtered Candidate Rankings ({len(filtered_df)} of {len(leaderboard_df)} Shown)")
+        if not filtered_df.empty:
+            st.dataframe(
+                filtered_df[["Candidate", "Domain", "Composite Fit %", "ATS Score", "Matched Skills", "Missing Skills", "Recommendation"]],
+                use_container_width=True
+            )
+            plot_df = filtered_df
+        else:
+            st.warning("No candidates match the active filter criteria. Showing full candidate cohort in matrix below.")
+            plot_df = leaderboard_df
 
         fig_scatter = px.scatter(
-            leaderboard_df,
+            plot_df,
             x="ATS Score",
             y="Composite Fit %",
             text="Candidate",
