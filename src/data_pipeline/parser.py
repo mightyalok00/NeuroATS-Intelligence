@@ -5,14 +5,18 @@ Extracts raw text, contact information, structural sections, and bullet points.
 
 import io
 import re
-from typing import Dict, List, Optional
+from typing import ClassVar
+import xml.etree.ElementTree as ET
+import zipfile
+
+import docx
 import pypdf
 
 
 class ResumeParser:
     """Extracts structured fields and sections from PDF or plaintext resumes."""
 
-    SECTION_HEADERS = {
+    SECTION_HEADERS: ClassVar[dict[str, list[str]]] = {
         "summary": [
             r"summary", r"professional summary", r"executive summary",
             r"profile", r"about me", r"objective", r"career objective"
@@ -64,13 +68,12 @@ class ResumeParser:
                     text_pages.append(extracted)
             return "\n\n".join(text_pages)
         except Exception as e:
-            return f"Error extracting PDF: {str(e)}"
+            return f"Error extracting PDF: {e!s}"
 
     @classmethod
     def extract_text_from_docx(cls, file_bytes: bytes) -> str:
         """Extract text content from uploaded DOCX bytes."""
         try:
-            import docx
             doc = docx.Document(io.BytesIO(file_bytes))
             paragraphs = [p.text for p in doc.paragraphs if p.text.strip()]
             
@@ -85,15 +88,13 @@ class ResumeParser:
         except Exception as e:
             # Fallback to direct XML extraction if docx fails
             try:
-                import zipfile
-                import xml.etree.ElementTree as ET
                 with zipfile.ZipFile(io.BytesIO(file_bytes)) as z:
                     xml_content = z.read("word/document.xml")
                     tree = ET.fromstring(xml_content)
                     texts = [node.text for node in tree.iter() if node.text]
                     return " ".join(texts)
             except Exception as xml_e:
-                return f"Error extracting DOCX: {str(e)} / {str(xml_e)}"
+                return f"Error extracting DOCX: {e!s} / {xml_e!s}"
 
     @classmethod
     def parse_file(cls, filename: str, file_bytes: bytes) -> str:
@@ -107,7 +108,7 @@ class ResumeParser:
             return file_bytes.decode("utf-8", errors="ignore")
 
     @classmethod
-    def extract_contact_info(cls, text: str) -> Dict[str, Optional[str]]:
+    def extract_contact_info(cls, text: str) -> dict[str, str | None]:
         """Extract name heuristic, email, phone, and profile links."""
         lines = [line.strip() for line in text.split("\n") if line.strip()]
         
@@ -116,10 +117,13 @@ class ResumeParser:
         for line in lines[:5]:
             clean = re.sub(r"[^a-zA-Z\s]", "", line).strip()
             words = clean.split()
-            if 1 < len(words) <= 4 and all(w[0].isupper() for w in words if w):
-                if not any(header in clean.lower() for headers in cls.SECTION_HEADERS.values() for header in headers):
-                    candidate_name = clean
-                    break
+            if (
+                1 < len(words) <= 4
+                and all(w[0].isupper() for w in words if w)
+                and not any(header in clean.lower() for headers in cls.SECTION_HEADERS.values() for header in headers)
+            ):
+                candidate_name = clean
+                break
         
         email_match = cls.EMAIL_PATTERN.search(text)
         phone_match = cls.PHONE_PATTERN.search(text)
@@ -135,10 +139,10 @@ class ResumeParser:
         }
 
     @classmethod
-    def segment_sections(cls, text: str) -> Dict[str, str]:
+    def segment_sections(cls, text: str) -> dict[str, str]:
         """Segment resume into major sections based on detected headings."""
         lines = text.split("\n")
-        section_indices: List[tuple] = []
+        section_indices: list[tuple[int, str]] = []
 
         # Find line positions for each heading
         for i, raw_line in enumerate(lines):
@@ -154,7 +158,7 @@ class ResumeParser:
         # Sort indices
         section_indices = sorted(section_indices, key=lambda x: x[0])
         
-        sections: Dict[str, str] = {
+        sections: dict[str, str] = {
             "header": "",
             "summary": "",
             "experience": "",
@@ -183,11 +187,11 @@ class ResumeParser:
         return sections
 
     @classmethod
-    def extract_bullet_points(cls, text: str) -> List[str]:
+    def extract_bullet_points(cls, text: str) -> list[str]:
         """Extract individual bullet points or meaningful sentences from experience / project text."""
         raw_lines = text.split("\n")
-        bullets: List[str] = []
-        current_bullet: List[str] = []
+        bullets: list[str] = []
+        current_bullet: list[str] = []
 
         bullet_prefixes = (r"^[•\-\*\u2022\u2023\u25E6\u2043\u2219]\s*", r"^\d+[\.\)]\s*")
 

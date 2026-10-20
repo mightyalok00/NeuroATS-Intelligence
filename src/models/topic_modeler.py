@@ -3,7 +3,8 @@ Unsupervised Topic Modeling Engine
 Uses Latent Dirichlet Allocation (LDA) and NMF to discover latent skill themes.
 """
 
-from typing import Dict, List, Tuple
+from typing import Any
+
 from sklearn.decomposition import LatentDirichletAllocation, NMF
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 
@@ -17,7 +18,7 @@ class TopicModeler:
         self.vectorizer = None
         self.model = None
 
-    def fit_transform(self, documents: List[str]) -> List[Dict[str, any]]:
+    def fit_transform(self, documents: list[str]) -> list[dict[str, Any]]:
         """
         Fit topic model on documents/bullets and return discovered topics with top keywords.
         """
@@ -57,7 +58,7 @@ class TopicModeler:
             doc_topic_dist = self.model.fit_transform(dtm)
 
         feature_names = self.vectorizer.get_feature_names_out()
-        topics_info: List[Dict[str, any]] = []
+        topics_info: list[dict[str, Any]] = []
 
         for topic_idx, topic in enumerate(self.model.components_):
             top_word_indices = topic.argsort()[:-8:-1]

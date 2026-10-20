@@ -3,7 +3,8 @@ Dense Semantic Embeddings and Cosine Similarity Engine
 Wraps SentenceTransformer with an instant offline LSA/TF-IDF dense vector fallback.
 """
 
-from typing import List, Optional
+import warnings
+
 import numpy as np
 from sklearn.decomposition import TruncatedSVD
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -32,7 +33,7 @@ class DenseEmbedder:
             except Exception:
                 DenseEmbedder._st_model = None
 
-    def encode(self, texts: List[str]) -> np.ndarray:
+    def encode(self, texts: list[str]) -> np.ndarray:
         """Encode a list of text strings into dense vector arrays."""
         if not texts:
             return np.zeros((0, 384))
@@ -53,7 +54,7 @@ class DenseEmbedder:
         # Robust, high-speed pure ML Fallback: LSA (TF-IDF + TruncatedSVD)
         return self._lsa_encode(texts)
 
-    def _lsa_encode(self, texts: List[str]) -> np.ndarray:
+    def _lsa_encode(self, texts: list[str]) -> np.ndarray:
         """Instant dense representation using Latent Semantic Analysis (LSA)."""
         vectorizer = TfidfVectorizer(
             ngram_range=(1, 2),
@@ -63,7 +64,6 @@ class DenseEmbedder:
         tfidf_mat = vectorizer.fit_transform(texts)
         
         # Safeguard n_components for small matrices
-        import warnings
         max_valid_components = min(tfidf_mat.shape[0], tfidf_mat.shape[1]) - 1
         n_components = max(1, min(128, max_valid_components)) if max_valid_components >= 1 else 1
         

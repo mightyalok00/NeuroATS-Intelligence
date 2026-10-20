@@ -4,11 +4,13 @@ Dynamically classifies user inquiries into distinct operational tasks using trai
 """
 
 import os
-from typing import Dict, List, Tuple
+from typing import Any
+
 import joblib
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
+
 from src.config import INTENT_CLASSES
 
 ARTIFACTS_DIR = os.path.join(os.path.dirname(__file__), "..", "artifacts")
@@ -20,11 +22,11 @@ class AdaptiveIntentClassifier:
 
     def __init__(self, force_retrain: bool = False):
         self.intents = INTENT_CLASSES
-        self.pipeline: Pipeline = None
+        self.pipeline: Pipeline | None = None
         if not force_retrain and os.path.exists(MODEL_PATH):
             try:
                 self.pipeline = joblib.load(MODEL_PATH)
-            except Exception:
+            except (OSError, ValueError, EOFError):
                 self._train_and_serialize()
         else:
             self._train_and_serialize()
@@ -101,11 +103,13 @@ class AdaptiveIntentClassifier:
         self.pipeline.fit(texts, labels)
         try:
             joblib.dump(self.pipeline, MODEL_PATH)
-        except Exception:
+        except OSError:
             pass
 
-    def classify_intent(self, query: str) -> Dict[str, any]:
+    def classify_intent(self, query: str) -> dict[str, Any]:
         """Classify user query into one of the operational intents with confidence."""
+        if self.pipeline is None:
+            self._train_and_serialize()
         probs = self.pipeline.predict_proba([query])[0]
         classes = self.pipeline.classes_
         

@@ -1,17 +1,18 @@
-from .text_rank import TextRankSummarizer
 from .ats_scorer import ATSScorer
+from .cover_letter import CoverLetterGenerator
 from .matcher import JobFitMatcher
 from .qa_engine import AdaptiveQAEngine
-from .tailor import ResumeTailor
-from .cover_letter import CoverLetterGenerator
 from .seniority_estimator import SeniorityEstimator
+from .tailor import ResumeTailor
+from .text_rank import TextRankSummarizer
 
 __all__ = [
-    "TextRankSummarizer",
     "ATSScorer",
+    "CoverLetterGenerator",
     "JobFitMatcher",
     "AdaptiveQAEngine",
     "ResumeTailor",
-    "CoverLetterGenerator",
-    "SeniorityEstimator"
+    "SeniorityEstimator",
+    "TextRankSummarizer",
 ]
+

@@ -3,10 +3,12 @@ Job Description Matcher and Skill Gap Analysis Engine
 Combines dense semantic similarity, TF-IDF lexical match, and skill taxonomy overlap.
 """
 
-from typing import Dict, List, Set, Tuple
+from typing import Any
+
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+
 from src.data_pipeline.skill_taxonomy import extract_skills_from_text
 from src.feature_engineering.embeddings import DenseEmbedder
 
@@ -17,7 +19,7 @@ class JobFitMatcher:
     def __init__(self, embedder: DenseEmbedder):
         self.embedder = embedder
 
-    def evaluate_fit(self, resume_text: str, job_text: str) -> Dict[str, any]:
+    def evaluate_fit(self, resume_text: str, job_text: str) -> dict[str, Any]:
         """
         Evaluate candidate fit against a job description.
         Returns:
@@ -58,10 +60,10 @@ class JobFitMatcher:
         resume_skills_dict = extract_skills_from_text(resume_text)
         job_skills_dict = extract_skills_from_text(job_text)
 
-        resume_skills_flat: Set[str] = {
+        resume_skills_flat: set[str] = {
             s.lower() for cat_skills in resume_skills_dict.values() for s in cat_skills
         }
-        job_skills_flat: Set[str] = {
+        job_skills_flat: set[str] = {
             s.lower() for cat_skills in job_skills_dict.values() for s in cat_skills
         }
 
@@ -89,9 +91,13 @@ class JobFitMatcher:
         sorted_job_term_indices = np.argsort(job_weights)[::-1]
         for idx in sorted_job_term_indices:
             term = str(job_terms[idx])
-            if term not in resume_words and not any(term in s.lower() for s in matched_skills):
-                if len(term) > 3 and not term.isdigit():
-                    missing_keywords.append(term)
+            if (
+                term not in resume_words
+                and not any(term in s.lower() for s in matched_skills)
+                and len(term) > 3
+                and not term.isdigit()
+            ):
+                missing_keywords.append(term)
             if len(missing_keywords) >= 8:
                 break
 

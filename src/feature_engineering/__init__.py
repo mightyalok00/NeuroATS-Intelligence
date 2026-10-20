@@ -1,4 +1,5 @@
-from .vectorizers import BM25Okapi, TFIDFEngine
 from .embeddings import DenseEmbedder
+from .vectorizers import BM25Okapi, TFIDFEngine
 
-__all__ = ["BM25Okapi", "TFIDFEngine", "DenseEmbedder"]
+__all__ = ["BM25Okapi", "DenseEmbedder", "TFIDFEngine"]
+

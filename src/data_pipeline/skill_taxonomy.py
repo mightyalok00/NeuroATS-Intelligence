@@ -3,9 +3,8 @@ Curated Skill Taxonomy with Domain Mapping and Regex Patterns
 """
 
 import re
-from typing import Dict, List, Set
 
-SKILL_TAXONOMY: Dict[str, List[str]] = {
+SKILL_TAXONOMY: dict[str, list[str]] = {
     "Programming Languages": [
         "python", "java", "c++", "c#", "c", "golang", "go", "rust", "typescript",
         "javascript", "ruby", "php", "swift", "kotlin", "scala", "r", "julia",
@@ -64,7 +63,7 @@ SKILL_TAXONOMY: Dict[str, List[str]] = {
 }
 
 # Inverted mapping: skill -> category
-SKILL_TO_CATEGORY: Dict[str, str] = {}
+SKILL_TO_CATEGORY: dict[str, str] = {}
 for category, skills in SKILL_TAXONOMY.items():
     for skill in skills:
         SKILL_TO_CATEGORY[skill.lower()] = category
@@ -87,13 +86,13 @@ COMPILED_SKILL_PATTERNS = {
 }
 
 
-def extract_skills_from_text(text: str) -> Dict[str, List[str]]:
+def extract_skills_from_text(text: str) -> dict[str, list[str]]:
     """
     Extract skills from text and group by category.
     Returns:
         dict of category -> list of matched skills
     """
-    matched_by_cat: Dict[str, Set[str]] = {cat: set() for cat in SKILL_TAXONOMY}
+    matched_by_cat: dict[str, set[str]] = {cat: set() for cat in SKILL_TAXONOMY}
     
     for skill, pattern in COMPILED_SKILL_PATTERNS.items():
         if pattern.search(text):
@@ -102,7 +101,7 @@ def extract_skills_from_text(text: str) -> Dict[str, List[str]]:
             
     # Clean up empty categories
     return {
-        cat: sorted(list(skills))
+        cat: sorted(skills)
         for cat, skills in matched_by_cat.items()
         if len(skills) > 0
     }

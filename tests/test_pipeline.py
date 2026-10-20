@@ -2,20 +2,25 @@
 Unit Tests for the AdaptiveML Resume and Machine Learning Pipeline
 """
 
+import io
 import unittest
+
+import docx
+
 from src.algorithms.ats_scorer import ATSScorer
+from src.algorithms.cover_letter import CoverLetterGenerator
 from src.algorithms.matcher import JobFitMatcher
 from src.algorithms.qa_engine import AdaptiveQAEngine
+from src.algorithms.seniority_estimator import SeniorityEstimator
+from src.algorithms.tailor import ResumeTailor
 from src.algorithms.text_rank import TextRankSummarizer
 from src.data_pipeline.parser import ResumeParser
 from src.data_pipeline.preprocessor import ResumePreprocessor
 from src.data_pipeline.skill_taxonomy import extract_skills_from_text
 from src.feature_engineering.embeddings import DenseEmbedder
-from src.feature_engineering.vectorizers import BM25Okapi, TFIDFEngine
-from src.models.cluster_engine import ExperienceClusterEngine
+from src.feature_engineering.vectorizers import BM25Okapi
 from src.models.domain_classifier import DomainClassifier
 from src.models.intent_classifier import AdaptiveIntentClassifier
-from src.models.topic_modeler import TopicModeler
 from src.sample_data import SAMPLE_JOB_DESCRIPTIONS, SAMPLE_RESUMES
 
 
@@ -123,8 +128,6 @@ class TestAdaptiveMLPipeline(unittest.TestCase):
         self.assertIn("ATS Score", response["answer"])
 
     def test_docx_parser(self):
-        import docx
-        import io
         doc = docx.Document()
         doc.add_heading("Alex Rivera", 0)
         doc.add_paragraph("Senior ML Engineer with PyTorch and Python experience.")
@@ -135,7 +138,6 @@ class TestAdaptiveMLPipeline(unittest.TestCase):
         self.assertIn("PyTorch", text)
 
     def test_resume_tailor(self):
-        from src.algorithms.tailor import ResumeTailor
         fit = self.matcher.evaluate_fit(self.resume_text, self.job_text)
         tailored = ResumeTailor.tailor_resume(self.resume_text, fit)
         self.assertGreaterEqual(tailored["ats_after"], tailored["ats_before"])
@@ -143,7 +145,6 @@ class TestAdaptiveMLPipeline(unittest.TestCase):
         self.assertGreater(len(docx_bytes), 1000)
 
     def test_cover_letter_generator(self):
-        from src.algorithms.cover_letter import CoverLetterGenerator
         bullets = ResumeParser.extract_bullet_points(self.resume_text)
         top_acc = [b[2] for b in self.summarizer.summarize(bullets, top_n=2)]
         contact = ResumeParser.extract_contact_info(self.resume_text)
@@ -161,7 +162,6 @@ class TestAdaptiveMLPipeline(unittest.TestCase):
         self.assertGreater(len(docx_bytes), 1000)
 
     def test_seniority_estimator(self):
-        from src.algorithms.seniority_estimator import SeniorityEstimator
         bullets = ResumeParser.extract_bullet_points(self.resume_text)
         ba = ResumePreprocessor.analyze_bullets(bullets)
         seniority = SeniorityEstimator.estimate_seniority(self.resume_text, "Machine Learning & AI", ba)

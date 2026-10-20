@@ -17,11 +17,11 @@ def train_and_export_all_models():
     """Retrain and persist all model artifacts to src/artifacts/."""
     print("=" * 60)
     print("Training and serializing DomainClassifier...")
-    dom_clf = DomainClassifier(force_retrain=True)
+    _ = DomainClassifier(force_retrain=True)
     print("DomainClassifier successfully serialized to src/artifacts/domain_classifier.joblib")
 
     print("\nTraining and serializing AdaptiveIntentClassifier...")
-    intent_clf = AdaptiveIntentClassifier(force_retrain=True)
+    _ = AdaptiveIntentClassifier(force_retrain=True)
     print("AdaptiveIntentClassifier successfully serialized to src/artifacts/intent_classifier.joblib")
 
     print("=" * 60)

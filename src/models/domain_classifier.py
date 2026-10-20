@@ -4,12 +4,13 @@ Classifies resumes into specialized engineering/tech domains using calibrated ML
 """
 
 import os
-from typing import Dict, List, Tuple
+from typing import Any
+
 import joblib
-import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
+
 from src.config import DOMAINS
 
 ARTIFACTS_DIR = os.path.join(os.path.dirname(__file__), "..", "artifacts")
@@ -21,11 +22,11 @@ class DomainClassifier:
 
     def __init__(self, force_retrain: bool = False):
         self.domains = DOMAINS
-        self.model: Pipeline = None
+        self.model: Pipeline | None = None
         if not force_retrain and os.path.exists(MODEL_PATH):
             try:
                 self.model = joblib.load(MODEL_PATH)
-            except Exception:
+            except (OSError, ValueError, EOFError):
                 self._train_and_serialize()
         else:
             self._train_and_serialize()
@@ -91,13 +92,15 @@ class DomainClassifier:
         self.model.fit(texts, labels)
         try:
             joblib.dump(self.model, MODEL_PATH)
-        except Exception:
+        except OSError:
             pass
 
-    def predict(self, text: str) -> Dict[str, any]:
+    def predict(self, text: str) -> dict[str, Any]:
         """
         Predict domain and return full probability distribution.
         """
+        if self.model is None:
+            self._train_and_serialize()
         probs = self.model.predict_proba([text])[0]
         classes = self.model.classes_
 

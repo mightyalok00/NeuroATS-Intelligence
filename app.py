@@ -29,15 +29,15 @@ from src.ui import (
     render_header,
     render_kpis,
     render_tab_ats,
-    render_tab_match,
-    render_tab_tailor,
-    render_tab_cover,
-    render_tab_seniority,
     render_tab_batch,
+    render_tab_cover,
+    render_tab_export,
+    render_tab_match,
+    render_tab_ml_explorer,
     render_tab_optimizer,
     render_tab_qa,
-    render_tab_ml_explorer,
-    render_tab_export
+    render_tab_seniority,
+    render_tab_tailor,
 )
 
 
@@ -126,11 +126,11 @@ with st.sidebar:
             resume_text = ResumeParser.parse_file(uploaded_file.name, uploaded_file.read())
         else:
             st.info("Upload a file or switch to 'Preloaded Sample' to explore.")
-            resume_text = SAMPLE_RESUMES[list(SAMPLE_RESUMES.keys())[0]]
+            resume_text = SAMPLE_RESUMES[next(iter(SAMPLE_RESUMES.keys()))]
 
     else:
         pasted = st.text_area("Paste Resume Text Here:", height=240)
-        resume_text = pasted if pasted.strip() else SAMPLE_RESUMES[list(SAMPLE_RESUMES.keys())[0]]
+        resume_text = pasted if pasted.strip() else SAMPLE_RESUMES[next(iter(SAMPLE_RESUMES.keys()))]
 
     st.markdown("---")
     st.markdown("### 🎯 Target Job Role")
@@ -152,7 +152,7 @@ with st.sidebar:
         target_role_title = st.text_input("Target Role Title:", "Staff Machine Learning Engineer")
         job_description = st.text_area(
             "Paste Job Requirements:",
-            value=SAMPLE_JOB_DESCRIPTIONS[list(SAMPLE_JOB_DESCRIPTIONS.keys())[0]],
+            value=SAMPLE_JOB_DESCRIPTIONS[next(iter(SAMPLE_JOB_DESCRIPTIONS.keys()))],
             height=160
         )
 

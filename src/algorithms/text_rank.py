@@ -3,7 +3,6 @@ TextRank Graph Algorithm for Extractive Summarization
 Builds a sentence graph with similarity edge weights and computes PageRank centrality.
 """
 
-from typing import List, Tuple
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -22,7 +21,7 @@ class TextRankSummarizer:
         self.max_iter = max_iter
         self.tol = tol
 
-    def summarize(self, sentences: List[str], top_n: int = 4) -> List[Tuple[int, float, str]]:
+    def summarize(self, sentences: list[str], top_n: int = 4) -> list[tuple[int, float, str]]:
         """
         Extract the top_n most central/impactful sentences from the text.
         Returns:

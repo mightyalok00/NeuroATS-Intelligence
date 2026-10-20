@@ -3,7 +3,7 @@
 [![Python](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.14-blue.svg)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.40+-FF4B4B.svg)](https://streamlit.io/)
 [![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-1.4+-F7931E.svg)](https://scikit-learn.org/)
-[![Status](https://img.shields.io/badge/Status-10%2F10%20Production%20Ready-brightgreen.svg)]()
+[![Status](https://img.shields.io/badge/Status-10%2F10%20Production%20Ready-brightgreen.svg)](https://github.com/mightyalok00/NeuroATS-Intelligence)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > **A 100% Free, Local-First, Zero-LLM AI & Machine Learning Platform** for enterprise ATS analytics, recruiter batch candidate ranking, real-time bullet point optimization, and career intelligence. Replaces costly black-box RAG with deterministic, mathematically sound machine learning algorithms, NLP feature engineering, unsupervised topic modeling, and supervised classification pipelines.
@@ -13,11 +13,13 @@
 ## 🌟 Why This Replaces RAG (The "10/10" Engineering Philosophy)
 
 Traditional RAG systems (like the original `Adaptive-Rag`) have significant limitations:
+
 1. **High API Costs & Rate Limits**: Rely on external cloud LLMs (OpenAI, Groq) and proprietary vector databases.
 2. **Hallucination Risk**: LLMs often generate inaccurate claims when evaluating candidate resumes or matching job requirements.
 3. **Black-Box Metrics**: They cannot explain *why* an ATS score was given or calculate deterministic, reproducible gap matrices.
 
 **NeuroATS-Intelligence** transforms this architecture into an **interpretable, high-performance Machine Learning & NLP pipeline**:
+
 - **0 External API Keys Needed**: 100% free, runs completely offline on your local CPU/GPU.
 - **✨ One-Click AI Resume Tailor**: Weaves missing role skills and power action verbs into your resume, previewing score jumps and exporting to `.docx`.
 - **✉️ Algorithmic Cover Letter Generator**: Synthesizes a structured 3-part cover letter linking candidate achievements to company requirements, exportable to `.docx`.
@@ -70,22 +72,26 @@ flowchart TD
 ---
 
 ## 🧮 Mathematical Formulations of Core Algorithms
-
+ 
 ### 1. BM25 Okapi Relevance Ranking
+
 Used for exact factual extraction from candidate resumes without LLM hallucination:
 $$\text{Score}(D, Q) = \sum_{q \in Q} \text{IDF}(q) \cdot \frac{f(q, D) \cdot (k_1 + 1)}{f(q, D) + k_1 \cdot \left(1 - b + b \cdot \frac{|D|}{\text{avgdl}}\right)}$$
 $$\text{IDF}(q) = \ln \left( \frac{N - n(q) + 0.5}{n(q) + 0.5} + 1 \right)$$
 *Parameters: $k_1 = 1.5$, $b = 0.75$.*
 
 ### 2. TextRank Graph Centrality (Extractive PageRank)
+
 Computes eigenvector centrality over the sentence similarity graph $G = (V, E)$ to extract top career impact bullets:
 $$PR(u) = \frac{1 - d}{|V|} + d \sum_{v \in \text{In}(u)} \frac{w_{vu}}{\sum_{k} w_{vk}} PR(v)$$
 *Where $d = 0.85$ (damping factor) and $w_{vu}$ is the cosine similarity between sentence vectors.*
 
 ### 3. Flesch Reading Ease Formula
+
 $$\text{Score} = 206.835 - 1.015 \left( \frac{\text{total words}}{\text{total sentences}} \right) - 84.6 \left( \frac{\text{total syllables}}{\text{total words}} \right)$$
 
 ### 4. Multidimensional ATS Composite Rubric
+
 The 100-point score is computed deterministically across 7 weighted pillars:
 $$\text{ATS Score} = w_1 S_{\text{contact}} + w_2 S_{\text{structure}} + w_3 S_{\text{verbs}} + w_4 S_{\text{metrics}} + w_5 S_{\text{technical}} + w_6 S_{\text{readability}} + w_7 S_{\text{length}}$$
 
@@ -94,7 +100,9 @@ $$\text{ATS Score} = w_1 S_{\text{contact}} + w_2 S_{\text{structure}} + w_3 S_{
 ## 🚀 Quickstart Guide
 
 ### 1. Installation
+
 Clone the repository and install requirements:
+
 ```bash
 git clone https://github.com/mightyalok00/NeuroATS-Intelligence.git
 cd NeuroATS-Intelligence
@@ -102,14 +110,19 @@ pip install -r requirements.txt
 ```
 
 ### 2. Run the Streamlit Application
+
 Launch the web interface:
+
 ```bash
 streamlit run app.py
 ```
+
 Open your browser at `http://localhost:8501`.
 
 ### 3. Run Pipeline Unit Tests
+
 Execute the automated test suite verifying all 11 ML components:
+
 ```bash
 python -m unittest tests/test_pipeline.py
 ```
@@ -129,7 +142,7 @@ python -m unittest tests/test_pipeline.py
 
 ## 📂 Repository Layout
 
-```
+```text
 d:/scaller/
 ├── .streamlit/
 │   └── config.toml            # Enterprise dark theme & server settings
@@ -174,4 +187,5 @@ d:/scaller/
 ---
 
 ## 🛡️ License
+
 MIT License. Free for educational and commercial use.

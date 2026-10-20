@@ -3,8 +3,8 @@ Adaptive ML Question-Answering and Autonomous Diagnostic Engine
 Routes user questions using the ML Intent Classifier and generates factual, algorithm-backed answers.
 """
 
-from typing import Dict, List, Optional
-import numpy as np
+from typing import Any
+
 from src.algorithms.ats_scorer import ATSScorer
 from src.algorithms.matcher import JobFitMatcher
 from src.algorithms.text_rank import TextRankSummarizer
@@ -38,8 +38,8 @@ class AdaptiveQAEngine:
         self,
         query: str,
         resume_text: str,
-        job_description: Optional[str] = None
-    ) -> Dict[str, any]:
+        job_description: str | None = None
+    ) -> dict[str, Any]:
         """
         Process user query adaptively using machine learning pipelines without requiring paid LLM APIs.
         """
@@ -64,7 +64,7 @@ class AdaptiveQAEngine:
         readability = ResumePreprocessor.calculate_readability(resume_text)
         bullet_analysis = ResumePreprocessor.analyze_bullets(bullets)
 
-        evidence_snippets: List[str] = []
+        evidence_snippets: list[str] = []
         answer_text = ""
 
         # Route to appropriate ML processing pipeline
@@ -131,7 +131,7 @@ class AdaptiveQAEngine:
             q1 = f"**Technical Deep-Dive**: You listed expertise in **{skills_str}**. Can you explain how you made architectural decisions or optimized bottlenecks using these technologies?"
             q2 = f"**Project Execution**: Regarding your accomplishment: *\"{bullet_prompts[0] if bullet_prompts else 'your primary project'}\"* — What technical challenges arose, and how did you measure your results?"
             q3 = f"**System Design & Reliability**: For a **{domain_pred}** role, how would you design a scalable, fault-tolerant system with automated CI/CD and observability?"
-            q4 = f"**Behavioral / STAR Framework**: Tell me about a time you had to balance technical debt against urgent feature delivery. How did you align with stakeholders?"
+            q4 = "**Behavioral / STAR Framework**: Tell me about a time you had to balance technical debt against urgent feature delivery. How did you align with stakeholders?"
 
             answer_text = (
                 f"### 🎙️ Tailored Interview Preparation\n"

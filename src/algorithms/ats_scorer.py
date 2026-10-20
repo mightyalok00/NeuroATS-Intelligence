@@ -3,8 +3,7 @@ Multi-Dimensional ATS Scoring Engine
 Evaluates structural integrity, quantifiable impact, action verbs, and skill depth.
 """
 
-from typing import Dict, List
-from src.config import ATS_WEIGHTS
+from typing import Any
 
 
 class ATSScorer:
@@ -13,18 +12,18 @@ class ATSScorer:
     @classmethod
     def evaluate(
         cls,
-        contact_info: Dict[str, any],
-        sections: Dict[str, str],
-        bullet_analysis: Dict[str, any],
-        skills_by_category: Dict[str, List[str]],
-        readability: Dict[str, any]
-    ) -> Dict[str, any]:
+        contact_info: dict[str, Any],
+        sections: dict[str, str],
+        bullet_analysis: dict[str, Any],
+        skills_by_category: dict[str, list[str]],
+        readability: dict[str, Any]
+    ) -> dict[str, Any]:
         """Compute full ATS compliance score and diagnostics."""
 
-        scores: Dict[str, float] = {}
-        strengths: List[str] = []
-        weaknesses: List[str] = []
-        recommendations: List[str] = []
+        scores: dict[str, float] = {}
+        strengths: list[str] = []
+        weaknesses: list[str] = []
+        recommendations: list[str] = []
 
         # 1. Contact Info (Max 10)
         c_score = 0.0

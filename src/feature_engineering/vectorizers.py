@@ -5,7 +5,7 @@ Implements TF-IDF n-gram vectorizer and BM25 Okapi algorithm in pure NumPy.
 
 import math
 import re
-from typing import Dict, List, Tuple
+
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 
@@ -18,7 +18,7 @@ class BM25Okapi:
     IDF(q) = ln((N - n(q) + 0.5) / (n(q) + 0.5) + 1)
     """
 
-    def __init__(self, corpus: List[str], k1: float = 1.5, b: float = 0.75):
+    def __init__(self, corpus: list[str], k1: float = 1.5, b: float = 0.75):
         self.k1 = k1
         self.b = b
         self.corpus = corpus
@@ -26,21 +26,21 @@ class BM25Okapi:
         self.tokenized_corpus = [self._tokenize(doc) for doc in corpus]
         self.doc_lens = [len(doc) for doc in self.tokenized_corpus]
         self.avgdl = sum(self.doc_lens) / max(self.corpus_size, 1)
-        self.idf: Dict[str, float] = {}
-        self.doc_freqs: List[Dict[str, int]] = []
+        self.idf: dict[str, float] = {}
+        self.doc_freqs: list[dict[str, int]] = []
         self._initialize()
 
-    def _tokenize(self, text: str) -> List[str]:
+    def _tokenize(self, text: str) -> list[str]:
         return re.findall(r"\b[a-zA-Z0-9_\-+#.]+\b", text.lower())
 
     def _initialize(self):
-        nd: Dict[str, int] = {}
+        nd: dict[str, int] = {}
         for doc in self.tokenized_corpus:
             frequencies = {}
             for word in doc:
                 frequencies[word] = frequencies.get(word, 0) + 1
             self.doc_freqs.append(frequencies)
-            for word in frequencies.keys():
+            for word in frequencies:
                 nd[word] = nd.get(word, 0) + 1
 
         for word, freq in nd.items():
@@ -69,7 +69,7 @@ class BM25Okapi:
 
         return scores
 
-    def rank(self, query: str, top_k: int = 5) -> List[Tuple[int, float, str]]:
+    def rank(self, query: str, top_k: int = 5) -> list[tuple[int, float, str]]:
         """Return top_k ranked documents with indices and scores."""
         scores = self.get_scores(query)
         top_indices = np.argsort(scores)[::-1][:top_k]
@@ -92,16 +92,16 @@ class TFIDFEngine:
         )
         self.is_fitted = False
 
-    def fit_transform(self, corpus: List[str]):
+    def fit_transform(self, corpus: list[str]):
         self.is_fitted = True
         return self.vectorizer.fit_transform(corpus)
 
-    def transform(self, texts: List[str]):
+    def transform(self, texts: list[str]):
         if not self.is_fitted:
             raise ValueError("TFIDFEngine must be fitted before transforming.")
         return self.vectorizer.transform(texts)
 
-    def get_top_terms(self, text: str, top_n: int = 10) -> List[Tuple[str, float]]:
+    def get_top_terms(self, text: str, top_n: int = 10) -> list[tuple[str, float]]:
         """Extract highest weighted TF-IDF terms from a single document."""
         if not self.is_fitted:
             self.fit_transform([text])

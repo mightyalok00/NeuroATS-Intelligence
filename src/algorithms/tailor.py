@@ -5,9 +5,11 @@ Optimizes resume bullets, injects missing role keywords, and generates formatted
 
 import io
 import re
-from typing import Dict, List, Tuple
+from typing import Any, ClassVar
+
 import docx
 from docx.shared import Inches, Pt, RGBColor
+
 from src.algorithms.ats_scorer import ATSScorer
 from src.data_pipeline.parser import ResumeParser
 from src.data_pipeline.preprocessor import ResumePreprocessor
@@ -17,7 +19,7 @@ from src.data_pipeline.skill_taxonomy import extract_skills_from_text
 class ResumeTailor:
     """Algorithmically tailors resumes to match target job descriptions and exports formatted DOCX."""
 
-    WEAK_TO_POWER_VERBS = {
+    WEAK_TO_POWER_VERBS: ClassVar[dict[str, str]] = {
         "helped": "orchestrated",
         "worked on": "engineered",
         "responsible for": "spearheaded",
@@ -34,8 +36,8 @@ class ResumeTailor:
     def tailor_resume(
         cls,
         resume_text: str,
-        job_fit_analysis: Dict[str, any]
-    ) -> Dict[str, any]:
+        job_fit_analysis: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         Generate an optimized version of the resume with injected keywords and upgraded verbs.
         Returns:
@@ -45,9 +47,8 @@ class ResumeTailor:
         """
         lines = resume_text.split("\n")
         missing_skills = job_fit_analysis.get("missing_skills", [])[:6]
-        missing_keywords = job_fit_analysis.get("priority_missing_keywords", [])[:5]
 
-        changes_log: List[Dict[str, str]] = []
+        changes_log: list[dict[str, str]] = []
         tailored_lines = []
 
         # 1. Optimize Bullets & replace weak verbs
@@ -58,7 +59,7 @@ class ResumeTailor:
             # Check weak verb replacement at beginning
             clean_lower = stripped.lower()
             for weak, strong in cls.WEAK_TO_POWER_VERBS.items():
-                if clean_lower.startswith(weak) or clean_lower.startswith(f"• {weak}") or clean_lower.startswith(f"- {weak}"):
+                if clean_lower.startswith((weak, f"• {weak}", f"- {weak}")):
                     pattern = re.compile(rf"\b{weak}\b", re.IGNORECASE)
                     modified_line = pattern.sub(strong.capitalize(), line, count=1)
                     changes_log.append({
@@ -162,7 +163,7 @@ class ResumeTailor:
                 h_run.font.color.rgb = RGBColor(79, 70, 229)
                 h_p.paragraph_format.space_before = Pt(8)
                 h_p.paragraph_format.space_after = Pt(3)
-            elif line.startswith("•") or line.startswith("-") or line.startswith("*"):
+            elif line.startswith(("•", "-", "*")):
                 b_p = doc.add_paragraph(style='List Bullet')
                 b_clean = re.sub(r"^[•\-*]\s*", "", line)
                 b_run = b_p.add_run(b_clean)
@@ -174,7 +175,7 @@ class ResumeTailor:
                 p_run = p.add_run(line)
                 p_run.font.name = "Calibri"
                 p_run.font.size = Pt(10.5)
-                p_p_space = Pt(2)
+                p.paragraph_format.space_after = Pt(2)
 
         buffer = io.BytesIO()
         doc.save(buffer)

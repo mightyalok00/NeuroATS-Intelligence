@@ -5,7 +5,8 @@ Constructs role-tailored cover letters linking candidate achievements to company
 
 import io
 import re
-from typing import Dict, List, Optional
+from typing import Any
+
 import docx
 from docx.shared import Inches, Pt, RGBColor
 
@@ -17,11 +18,11 @@ class CoverLetterGenerator:
     def generate_cover_letter(
         cls,
         candidate_name: str,
-        contact_info: Dict[str, any],
+        contact_info: dict[str, Any],
         target_role: str,
         job_text: str,
-        top_accomplishments: List[str],
-        matched_skills: List[str]
+        top_accomplishments: list[str],
+        matched_skills: list[str]
     ) -> str:
         """
         Synthesize a structured 3-part cover letter:

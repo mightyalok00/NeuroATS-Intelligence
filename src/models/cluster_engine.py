@@ -2,9 +2,10 @@
 K-Means Semantic Clustering Engine for Bullet Points and Experience
 """
 
-from typing import Dict, List
-import numpy as np
+from typing import Any
+
 from sklearn.cluster import KMeans
+
 from src.feature_engineering.embeddings import DenseEmbedder
 
 
@@ -14,7 +15,7 @@ class ExperienceClusterEngine:
     def __init__(self, embedder: DenseEmbedder):
         self.embedder = embedder
 
-    def cluster_bullets(self, bullets: List[str], max_clusters: int = 4) -> List[Dict[str, any]]:
+    def cluster_bullets(self, bullets: list[str], max_clusters: int = 4) -> list[dict[str, Any]]:
         """Cluster bullets into cohesive thematic work streams."""
         valid_bullets = [b.strip() for b in bullets if len(b.strip().split()) >= 4]
         if len(valid_bullets) < 2:
@@ -31,11 +32,11 @@ class ExperienceClusterEngine:
         kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
         labels = kmeans.fit_predict(embeddings)
 
-        clusters: Dict[int, List[str]] = {i: [] for i in range(k)}
+        clusters: dict[int, list[str]] = {i: [] for i in range(k)}
         for bullet, label in zip(valid_bullets, labels):
             clusters[label].append(bullet)
 
-        results: List[Dict[str, any]] = []
+        results: list[dict[str, Any]] = []
         for c_id, c_bullets in clusters.items():
             if not c_bullets:
                 continue
