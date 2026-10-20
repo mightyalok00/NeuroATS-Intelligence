@@ -38,36 +38,44 @@ Traditional RAG systems (like the original `Adaptive-Rag`) have significant limi
 
 ```mermaid
 flowchart TD
-    subgraph Ingestion ["1. Data Ingestion & Preprocessing"]
-        PDF[PDF / TXT Resume] --> Parser[ResumeParser: Regex Entity & Section Extraction]
-        Parser --> Cleaning[ResumePreprocessor: Tokenization & Syllable Counting]
-        Cleaning --> Readability[Flesch Reading Ease & Grade Level]
-        Cleaning --> ActionVerbs[Action-Verb & Metric Impact Ratios]
-        Parser --> Skills[Taxonomy Matcher: 400+ Categorized Skills]
+    subgraph Ingestion["1. Data Ingestion and Preprocessing"]
+        PDF["PDF / TXT / DOCX Resume"] --> Parser["ResumeParser: Entity and Section Extraction"]
+        Parser --> Cleaning["ResumePreprocessor: Tokenization and Syllables"]
+        Cleaning --> Readability["Flesch Reading Ease and Grade Level"]
+        Cleaning --> ActionVerbs["Action-Verb and Metric Impact Ratios"]
+        Parser --> Skills["Taxonomy Matcher: 400+ Technical Skills"]
     end
 
-    subgraph Representations ["2. Feature Engineering"]
-        Cleaning --> TFIDF[TF-IDF N-Gram Vectorizer (1,2)]
-        Cleaning --> BM25[BM25 Okapi Pure-NumPy Inverted Index]
-        Cleaning --> Dense[DenseEmbedder: SentenceTransformer / LSA SVD]
+    subgraph Representations["2. Feature Engineering"]
+        Cleaning --> TFIDF["TF-IDF N-Gram Vectorizer"]
+        Cleaning --> BM25["BM25 Okapi Inverted Index"]
+        Cleaning --> Dense["DenseEmbedder: SBERT and LSA SVD"]
     end
 
-    subgraph Models ["3. AI & Machine Learning Models"]
-        TFIDF --> DomClf[Supervised Domain Classifier (7 Tech Domains)]
-        TFIDF --> IntentClf[Adaptive ML Intent Classifier]
-        TFIDF --> LDA[Latent Dirichlet Allocation Topic Modeler]
-        Dense --> KMeans[K-Means Semantic Bullet Clustering]
+    subgraph Models["3. AI and Machine Learning Models"]
+        TFIDF --> DomClf["Supervised Domain Classifier"]
+        TFIDF --> IntentClf["Adaptive ML Intent Classifier"]
+        TFIDF --> LDA["Latent Dirichlet Allocation Topic Modeler"]
+        Dense --> KMeans["K-Means Semantic Bullet Clustering"]
     end
 
-    subgraph Algorithms ["4. Core Algorithmic Engines"]
-        Dense & TFIDF --> JobMatch[JobFitMatcher: Composite Semantic + Skill Match]
-        Dense & TFIDF --> TextRank[TextRank: PageRank Graph Centrality Summarizer]
-        ActionVerbs & Skills & Readability --> ATS[Multi-Dimensional ATS Scoring Engine (0-100)]
-        BM25 & IntentClf --> QA[Adaptive ML Q&A Assistant]
+    subgraph Algorithms["4. Core Algorithmic Engines"]
+        Dense --> JobMatch["JobFitMatcher: Semantic and Skill Match"]
+        TFIDF --> JobMatch
+        Dense --> TextRank["TextRank: PageRank Graph Centrality"]
+        TFIDF --> TextRank
+        ActionVerbs --> ATS["Multi-Dimensional ATS Scoring Engine"]
+        Skills --> ATS
+        Readability --> ATS
+        BM25 --> QA["Adaptive ML Q and A Assistant"]
+        IntentClf --> QA
     end
 
-    subgraph UI ["5. Streamlit Presentation Layer"]
-        ATS & JobMatch & QA & DomClf --> Dashboard[Glassmorphic Streamlit Dashboard with Plotly]
+    subgraph UI["5. Streamlit Presentation Layer"]
+        ATS --> Dashboard["Glassmorphic Streamlit Dashboard with Plotly"]
+        JobMatch --> Dashboard
+        QA --> Dashboard
+        DomClf --> Dashboard
     end
 ```
 
