@@ -1,213 +1,175 @@
-# 🧠 NeuroATS-Intelligence Platform
+# NeuroATS Intelligence
 
-[![Live App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://neuroats-intelligence.streamlit.app/)
-[![Python](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.14-blue.svg)](https://www.python.org/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-1.40+-FF4B4B.svg)](https://streamlit.io/)
-[![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-1.4+-F7931E.svg)](https://scikit-learn.org/)
-[![CI](https://github.com/mightyalok00/NeuroATS-Intelligence/actions/workflows/ci.yml/badge.svg)](https://github.com/mightyalok00/NeuroATS-Intelligence/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+**Explainable resume analysis and job-description matching with Python, NLP, and machine learning.**
 
-> 🚀 **Live Demo**: [https://neuroats-intelligence.streamlit.app/](https://neuroats-intelligence.streamlit.app/)
->
-> **A 100% Free, Local-First, Zero-LLM AI & Machine Learning Platform** for enterprise ATS analytics, recruiter batch candidate ranking, real-time bullet point optimization, and career intelligence. Replaces costly black-box RAG with deterministic, mathematically sound machine learning algorithms, NLP feature engineering, unsupervised topic modeling, and supervised classification pipelines.
+NeuroATS Intelligence is a Streamlit application that helps users inspect resume content, compare it with a target role, identify potential skill gaps, and review structured resume-improvement suggestions.
 
----
+<p>
+  <a href="https://neuroats-intelligence.streamlit.app/"><img src="https://static.streamlit.io/badges/streamlit_badge_black_white.svg" alt="Open live demo"></a>
+  <a href="https://github.com/mightyalok00/NeuroATS-Intelligence/actions/workflows/ci.yml"><img src="https://github.com/mightyalok00/NeuroATS-Intelligence/actions/workflows/ci.yml/badge.svg" alt="GitHub Actions CI"></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License"></a>
+  <img src="https://img.shields.io/badge/Python-3.11-blue.svg" alt="Python 3.11">
+</p>
 
-## 🌟 Why This Replaces RAG (The "10/10" Engineering Philosophy)
+**Live demo:** [neuroats-intelligence.streamlit.app](https://neuroats-intelligence.streamlit.app/)
 
-Traditional RAG systems (like the original `Adaptive-Rag`) have significant limitations:
+> **Responsible use:** Scores and rankings are decision-support signals, not hiring decisions, hiring probabilities, or validated predictors of job performance. Human review is required. See the project's [evaluation, fairness, and limitations guide](docs/EVALUATION_AND_FAIRNESS.md).
 
-1. **High API Costs & Rate Limits**: Rely on external cloud LLMs (OpenAI, Groq) and proprietary vector databases.
-2. **Hallucination Risk**: LLMs often generate inaccurate claims when evaluating candidate resumes or matching job requirements.
-3. **Black-Box Metrics**: They cannot explain *why* an ATS score was given or calculate deterministic, reproducible gap matrices.
+## What it does
 
-**NeuroATS-Intelligence** transforms this architecture into an **interpretable, high-performance Machine Learning & NLP pipeline**:
+- **Resume parsing:** extracts text and available sections from supported PDF, DOCX, and TXT documents.
+- **Resume-quality feedback:** applies a configurable rubric to structure, contact details, action verbs, quantified achievements, skills, readability, and length.
+- **Job-fit analysis:** combines lexical / semantic text similarity and detected skill overlap to highlight relevant content and potential gaps.
+- **NLP tools:** includes TF-IDF, BM25, TextRank, and configurable embedding / LSA representations.
+- **Career-document assistance:** suggests resume bullet revisions and drafts cover letters for user review.
+- **Candidate comparison:** presents multiple profiles and role-fit signals in an interactive dashboard.
+- **Interactive reporting:** displays results with Streamlit and Plotly.
 
-- **0 External API Keys Needed**: 100% free, runs completely offline on your local CPU/GPU.
-- **📤 One-Click Direct Resume Upload**: Drag-and-drop `.pdf`, `.docx`, or `.txt` resumes directly on the main dashboard with instant offline AI analysis.
-- **🎛️ Dynamic Pipeline Filters & Cutoffs**: Set custom passing ATS thresholds, target domain specialization, and filter skills by taxonomy family.
-- **✨ One-Click AI Resume Tailor**: Weaves missing role skills and power action verbs into your resume, previewing score jumps and exporting to `.docx`.
-- **✉️ Algorithmic Cover Letter Generator**: Synthesizes a structured 3-part cover letter linking candidate achievements to company requirements, exportable to `.docx`.
-- **📈 ML Seniority Estimator & Career Roadmap**: Predicts candidate engineering tier (Junior to Principal), benchmarks market salary bands, and outlines next-tier promotion milestones.
-- **Multi-Resume Batch Leaderboard**: Evaluate and rank 2 to 10 candidates simultaneously with a 4-quadrant scatter matrix and recruiter candidate filtering.
-- **Real-Time Live Bullet Optimizer**: Interactive reactive sandbox to draft and boost bullet points using the Google XYZ formula.
-- **Universal Document Support**: Native parsing for `.pdf`, `.docx`, and `.txt` documents.
-- **Offline Model Serialization**: Pre-compiled `.joblib` model artifacts decoupled from runtime inference.
-- **Explainable AI (XAI)**: Full probability distributions, TF-IDF feature weights, and exact evidence spans.
+## Architecture
 
----
-
-## 🏗️ System Architecture & ML Pipeline
-
-```mermaid
+~~~mermaid
 flowchart TD
-    subgraph Ingestion["1. Data Ingestion and Preprocessing"]
-        PDF["PDF / TXT / DOCX Resume"] --> Parser["ResumeParser: Entity and Section Extraction"]
-        Parser --> Cleaning["ResumePreprocessor: Tokenization and Syllables"]
-        Cleaning --> Readability["Flesch Reading Ease and Grade Level"]
-        Cleaning --> ActionVerbs["Action-Verb and Metric Impact Ratios"]
-        Parser --> Skills["Taxonomy Matcher: 400+ Technical Skills"]
-    end
+    A[PDF / DOCX / TXT] --> B[Text extraction and section parsing]
+    B --> C[Preprocessing and feature engineering]
+    C --> D[TF-IDF / BM25 / embeddings or LSA]
+    C --> E[Resume-quality rubric]
+    D --> F[Job matching and skill-gap analysis]
+    D --> G[Ranking and extractive summarization]
+    E --> H[Streamlit dashboard]
+    F --> H
+    G --> H
+    H --> I[Human review]
+~~~
 
-    subgraph Representations["2. Feature Engineering"]
-        Cleaning --> TFIDF["TF-IDF N-Gram Vectorizer"]
-        Cleaning --> BM25["BM25 Okapi Inverted Index"]
-        Cleaning --> Dense["DenseEmbedder: SBERT and LSA SVD"]
-    end
+### Algorithm reference
 
-    subgraph Models["3. AI and Machine Learning Models"]
-        TFIDF --> DomClf["Supervised Domain Classifier"]
-        TFIDF --> IntentClf["Adaptive ML Intent Classifier"]
-        TFIDF --> LDA["Latent Dirichlet Allocation Topic Modeler"]
-        Dense --> KMeans["K-Means Semantic Bullet Clustering"]
-    end
+See **[Algorithm Notes](docs/ALGORITHMS.md)** for readable explanations of BM25, TF-IDF and cosine similarity, TextRank, embedding / LSA approaches, and the scoring rubric. The notes distinguish algorithm descriptions from empirical performance claims.
 
-    subgraph Algorithms["4. Core Algorithmic Engines"]
-        Dense --> JobMatch["JobFitMatcher: Semantic and Skill Match"]
-        TFIDF --> JobMatch
-        Dense --> TextRank["TextRank: PageRank Graph Centrality"]
-        TFIDF --> TextRank
-        ActionVerbs --> ATS["Multi-Dimensional ATS Scoring Engine"]
-        Skills --> ATS
-        Readability --> ATS
-        BM25 --> QA["Adaptive ML Q and A Assistant"]
-        IntentClf --> QA
-    end
+## Technology
 
-    subgraph UI["5. Streamlit Presentation Layer"]
-        ATS --> Dashboard["Glassmorphic Streamlit Dashboard with Plotly"]
-        JobMatch --> Dashboard
-        QA --> Dashboard
-        DomClf --> Dashboard
-    end
-```
+- **Language / UI:** Python, Streamlit
+- **ML / NLP:** scikit-learn, NumPy, SciPy, NLTK, BM25, TF-IDF, TextRank
+- **Documents:** PDF and DOCX parsing utilities
+- **Visualization:** Plotly
+- **Testing / automation:** unittest and GitHub Actions
 
----
+Dependencies are listed in [requirements.txt](requirements.txt). CI is configured for Python 3.11.
 
-## 🧮 Mathematical Formulations of Core Algorithms
+## Run locally
 
-### 1. BM25 Okapi Relevance Ranking
+### Requirements
 
-Used for exact factual extraction from candidate resumes without LLM hallucination:
-$$\text{Score}(D, Q) = \sum_{q \in Q} \text{IDF}(q) \cdot \frac{f(q, D) \cdot (k_1 + 1)}{f(q, D) + k_1 \cdot \left(1 - b + b \cdot \frac{|D|}{\text{avgdl}}\right)}$$
-$$\text{IDF}(q) = \ln \left( \frac{N - n(q) + 0.5}{n(q) + 0.5} + 1 \right)$$
-*Parameters: $k_1 = 1.5$, $b = 0.75$.*
+- Git
+- Python 3.11
+- pip
 
-### 2. TextRank Graph Centrality (Extractive PageRank)
+### Install
 
-Computes eigenvector centrality over the sentence similarity graph $G = (V, E)$ to extract top career impact bullets:
-$$PR(u) = \frac{1 - d}{|V|} + d \sum_{v \in \text{In}(u)} \frac{w_{vu}}{\sum_{k} w_{vk}} PR(v)$$
-*Where $d = 0.85$ (damping factor) and $w_{vu}$ is the cosine similarity between sentence vectors.*
-
-### 3. Flesch Reading Ease Formula
-
-$$\text{Score} = 206.835 - 1.015 \left( \frac{\text{total words}}{\text{total sentences}} \right) - 84.6 \left( \frac{\text{total syllables}}{\text{total words}} \right)$$
-
-### 4. Multidimensional ATS Composite Rubric
-
-The 100-point score is computed deterministically across 7 weighted pillars:
-$$\text{ATS Score} = w_1 S_{\text{contact}} + w_2 S_{\text{structure}} + w_3 S_{\text{verbs}} + w_4 S_{\text{metrics}} + w_5 S_{\text{technical}} + w_6 S_{\text{readability}} + w_7 S_{\text{length}}$$
-
----
-
-## 🚀 Quickstart Guide
-
-### 🌐 Live Cloud Demo
-
-Experience the full enterprise platform instantly in your browser:  
-👉 **[https://neuroats-intelligence.streamlit.app/](https://neuroats-intelligence.streamlit.app/)**
-
----
-
-### 1. Local Installation
-
-Clone the repository and install requirements:
-
-```bash
+~~~bash
 git clone https://github.com/mightyalok00/NeuroATS-Intelligence.git
 cd NeuroATS-Intelligence
-pip install -r requirements.txt
-```
+python -m venv .venv
+~~~
 
-### 2. Run the Streamlit Application
+Activate the environment:
 
-Launch the web interface:
+**Windows PowerShell**
+~~~powershell
+.\.venv\Scripts\Activate.ps1
+~~~
 
-```bash
+**macOS / Linux**
+~~~bash
+source .venv/bin/activate
+~~~
+
+Install dependencies and launch:
+
+~~~bash
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 streamlit run app.py
-```
+~~~
 
-Open your browser at `http://localhost:8501`.
+Open the local URL shown by Streamlit, usually http://localhost:8501.
 
-### 3. Run Pipeline Unit Tests
+## Test and benchmark
 
-Execute the automated test suite verifying all 11 ML components:
+Run the unit tests:
 
-```bash
-python -m unittest tests/test_pipeline.py
-```
+~~~bash
+python -m unittest discover -s tests -p "test_*.py" -v
+~~~
 
-The repository also runs its unit tests in GitHub Actions. See [Evaluation, Fairness, and Limitations](docs/EVALUATION_AND_FAIRNESS.md) for the benchmark protocol, reporting expectations, and responsible-use guidance.
+Run the reproducible BM25 ranking smoke benchmark:
 
----
+~~~bash
+python -m benchmarks.evaluate_ranking
+~~~
 
-## 📊 Feature Highlights
+The benchmark uses a small, manually labelled illustrative corpus to verify ranking-metric calculation and provide a reproducible baseline for the lexical retrieval component. It is **not** a real-world resume-ranking benchmark and must not be presented as evidence of hiring accuracy, fairness, or generalization.
 
-- **📄 Smart Resume Parsing**: Extracts name, phone, email, LinkedIn, GitHub, and segments sections (Experience, Education, Skills, Projects, Summary).
-- **🎯 Job Description Fit**: Calculates semantic cosine similarity + hard skill overlap + missing keyword priority rankings.
-- **🤖 Zero-LLM Adaptive Q&A**: Dynamically routes user queries into 5 intent categories and answers accurately from the resume.
-- **🎙️ Algorithmic Interview Question Generator**: Auto-generates technical deep-dives and STAR behavioral questions tailored to candidate projects.
-- **🎨 Modern Dark-Mode UI**: Glassmorphism cards, glowing accent borders, and dynamic Plotly radar/bar charts.
-- **📥 1-Click Export**: Download a full candidate audit report in Markdown format.
+See the [CI workflow](https://github.com/mightyalok00/NeuroATS-Intelligence/actions/workflows/ci.yml) for automated checks.
 
----
+## Evaluation, fairness, and privacy
 
-## 📂 Repository Layout
+Read [Evaluation, Fairness, and Limitations](docs/EVALUATION_AND_FAIRNESS.md) before interpreting scores or using the tool in consequential contexts.
 
-```text
-d:/scaller/
-├── .streamlit/
-│   └── config.toml            # Enterprise dark theme & server settings
-├── app.py                     # Streamlit Application Orchestrator Controller
-├── requirements.txt           # Project Dependencies
-├── README.md                  # Comprehensive Architecture & Documentation
+A meaningful real-world evaluation still requires permitted representative data, candidate-level leakage prevention, explicit relevance labels, simple baselines, appropriate ranking metrics (such as Recall@k and NDCG@k), error analysis, and reproducible reporting. The included smoke benchmark only checks the mechanics on a small illustrative corpus.
+
+Privacy considerations:
+- Do not commit real resumes, contact details, credentials, or private evaluation data.
+- Treat uploaded resume text as untrusted input.
+- Check model configuration and cache state: a pretrained embedding model may be downloaded on first use; do not assume every setup is fully offline.
+
+## Repository structure
+
+~~~text
+.
+├── app.py
+├── requirements.txt
 ├── src/
-│   ├── config.py              # Rubrics, weights, domain & intent constants
-│   ├── sample_data.py         # 5 Realistic candidate profiles & job descriptions
-│   ├── ui/
-│   │   ├── __init__.py
-│   │   ├── styles.py          # Enterprise CSS tokens & design system
-│   │   └── components.py      # Modular tab views & KPI renderers
+│   ├── algorithms/
 │   ├── data_pipeline/
-│   │   ├── parser.py          # Universal parser (PDF, DOCX, TXT)
-│   │   ├── preprocessor.py    # Flesch Readability, action verbs & metric impact
-│   │   └── skill_taxonomy.py  # 400+ curated technical skill taxonomy
 │   ├── feature_engineering/
-│   │   ├── vectorizers.py     # Sublinear TF-IDF & pure NumPy BM25 Okapi
-│   │   └── embeddings.py      # Dense vector embeddings with SVD/LSA fallback
-│   ├── models/
-│   │   ├── domain_classifier.py  # Supervised ML domain classification
-│   │   ├── intent_classifier.py  # Adaptive ML query router
-│   │   ├── topic_modeler.py      # Unsupervised LDA / NMF topic modeling
-│   │   ├── cluster_engine.py     # K-Means experience clustering
-│   │   └── train_models.py       # Offline model training & joblib serializer
-│   ├── artifacts/
-│   │   ├── domain_classifier.joblib  # Serialized domain classifier
-│   │   └── intent_classifier.joblib  # Serialized intent router
-│   └── algorithms/
-│       ├── text_rank.py       # PageRank graph algorithm for summarization
-│       ├── ats_scorer.py      # Multi-dimensional ATS scoring engine
-│       ├── matcher.py         # Job description fit & skill gap analyzer
-│       ├── tailor.py          # AI Resume Tailor & DOCX generator
-│       ├── cover_letter.py    # Algorithmic Cover Letter & DOCX generator
-│       ├── seniority_estimator.py # ML Seniority tier & career roadmap
-│       └── qa_engine.py       # Adaptive ML question answering engine
-└── tests/
-    └── test_pipeline.py       # 15 automated unit tests
-```
+│   └── models/
+├── tests/
+├── benchmarks/
+│   └── evaluate_ranking.py
+├── docs/
+│   ├── ALGORITHMS.md
+│   └── EVALUATION_AND_FAIRNESS.md
+└── .github/workflows/ci.yml
+~~~
 
----
+Directory contents may evolve; consult the repository for the current implementation.
 
-## 🛡️ License
+## Limitations
 
-MIT License. Free for educational and commercial use.
+- The ATS-style score is a heuristic resume-feedback rubric, not a commercial ATS score or hiring probability.
+- Similarity can miss paraphrases or overvalue shared vocabulary; detected skills depend on the taxonomy.
+- PDF layout, columns, scanned documents, and unusual formatting can reduce extraction quality.
+- Seniority estimates and generated text may be inaccurate; verify all suggested statements and never include invented qualifications or metrics.
+- Unit tests and the illustrative smoke benchmark do not establish real-world validity, fairness, or production readiness.
+
+## Roadmap
+
+- Evaluate on a documented, permitted, held-out resume/job relevance dataset.
+- Compare BM25 and current job-fit scoring against keyword and other simple baselines.
+- Report Recall@k, NDCG@k, confidence intervals where feasible, and representative failure cases.
+- Add parser fixtures for diverse resume layouts and document model-download / offline behavior.
+- Strengthen privacy and fairness review before any consequential deployment.
+
+## Contributing
+
+1. Create a focused branch.
+2. Add tests for changed behavior.
+3. Run the test suite and ranking smoke benchmark.
+4. Document changes to scoring, model behavior, data handling, or dependencies.
+5. Open a pull request with the validation evidence and known limitations.
+
+Do not commit real resumes, personal data, secrets, or private benchmark records.
+
+## License
+
+See [LICENSE](LICENSE) for the project's license terms.
