@@ -26,6 +26,7 @@ from src.models.topic_modeler import TopicModeler
 from src.sample_data import SAMPLE_JOB_DESCRIPTIONS, SAMPLE_RESUMES
 from src.ui import (
     ENTERPRISE_CSS,
+    render_active_resume_banner,
     render_filter_banner,
     render_header,
     render_kpis,
@@ -92,6 +93,16 @@ ml_stack = load_ml_infrastructure()
 
 
 # ---------------------------------------------------------
+# State Initialization
+# ---------------------------------------------------------
+if "resume_text" not in st.session_state:
+    default_sample_key = next(iter(SAMPLE_RESUMES.keys()))
+    st.session_state["resume_text"] = SAMPLE_RESUMES[default_sample_key]
+    st.session_state["candidate_file_name"] = default_sample_key
+    st.session_state["source_mode"] = "Sample Profile"
+    st.session_state["is_uploaded"] = False
+
+# ---------------------------------------------------------
 # Sidebar Controls & Document Ingestion
 # ---------------------------------------------------------
 with st.sidebar:
@@ -100,37 +111,61 @@ with st.sidebar:
     input_mode = st.radio(
         "Source Method:",
         ["⚡ Preloaded High-Quality Sample", "📤 Upload Custom PDF / DOCX / TXT", "✍️ Paste Resume Text"],
-        index=0
+        index=1 if st.session_state.get("is_uploaded", False) else 0,
+        key="sidebar_source_method"
     )
-
-    resume_text = ""
-    candidate_file_name = "Sample Resume"
 
     if input_mode == "⚡ Preloaded High-Quality Sample":
         chosen_sample = st.selectbox(
             "Select Candidate Profile:",
             list(SAMPLE_RESUMES.keys()),
-            index=0
+            index=0,
+            key="sidebar_sample_select"
         )
-        resume_text = SAMPLE_RESUMES[chosen_sample]
-        candidate_file_name = chosen_sample
+        btn_load_sample = st.button("🔄 Load Candidate Profile", use_container_width=True, key="btn_load_sample")
+        if btn_load_sample or (not st.session_state.get("is_uploaded", False) and st.session_state.get("last_chosen_sample") != chosen_sample):
+            st.session_state["resume_text"] = SAMPLE_RESUMES[chosen_sample]
+            st.session_state["candidate_file_name"] = chosen_sample
+            st.session_state["source_mode"] = "Sample Profile"
+            st.session_state["is_uploaded"] = False
+            st.session_state["last_chosen_sample"] = chosen_sample
+            if btn_load_sample:
+                st.rerun()
 
     elif input_mode == "📤 Upload Custom PDF / DOCX / TXT":
         uploaded_file = st.file_uploader(
-            "Upload Resume (PDF, DOCX, TXT)",
+            "Upload Resume (PDF, DOCX, TXT):",
             type=["pdf", "docx", "txt"],
+            key="sidebar_uploader_widget",
             help="Your file is parsed 100% locally on your machine with zero cloud upload."
         )
-        if uploaded_file is not None:
-            candidate_file_name = uploaded_file.name
-            resume_text = ResumeParser.parse_file(uploaded_file.name, uploaded_file.read())
-        else:
-            st.info("Upload a file or switch to 'Preloaded Sample' to explore.")
-            resume_text = SAMPLE_RESUMES[next(iter(SAMPLE_RESUMES.keys()))]
+        btn_analyze_sidebar = st.button("⚡ Analyse Uploaded Resume", type="primary", use_container_width=True, key="btn_analyze_sidebar")
+        if uploaded_file is not None and (
+            btn_analyze_sidebar or st.session_state.get("last_sidebar_upload") != uploaded_file.name
+        ):
+            extracted = ResumeParser.parse_file(uploaded_file.name, uploaded_file.read())
+            if extracted and not extracted.startswith("Error"):
+                st.session_state["resume_text"] = extracted
+                st.session_state["candidate_file_name"] = uploaded_file.name
+                st.session_state["source_mode"] = "Uploaded File"
+                st.session_state["is_uploaded"] = True
+                st.session_state["last_sidebar_upload"] = uploaded_file.name
+                st.rerun()
+            else:
+                st.error(extracted)
 
     else:
-        pasted = st.text_area("Paste Resume Text Here:", height=240)
-        resume_text = pasted if pasted.strip() else SAMPLE_RESUMES[next(iter(SAMPLE_RESUMES.keys()))]
+        pasted = st.text_area("Paste Resume Text Here:", height=240, key="sidebar_paste_area")
+        btn_analyze_paste = st.button("⚡ Analyse Pasted Resume", type="primary", use_container_width=True, key="btn_analyze_paste")
+        if btn_analyze_paste and pasted.strip():
+            st.session_state["resume_text"] = pasted
+            st.session_state["candidate_file_name"] = "Pasted Resume Text"
+            st.session_state["source_mode"] = "Pasted Text"
+            st.session_state["is_uploaded"] = False
+            st.rerun()
+
+    resume_text = st.session_state["resume_text"]
+    candidate_file_name = st.session_state["candidate_file_name"]
 
     st.markdown("---")
     st.markdown("### 🎯 Target Job Role")
@@ -226,9 +261,46 @@ seniority_info = SeniorityEstimator.estimate_seniority(
 
 
 # ---------------------------------------------------------
-# Brand Header, Top KPI Metric Cards & Active Filter Banner
+# Brand Header, Active Profile & Upload Panel
 # ---------------------------------------------------------
 render_header(title=APP_TITLE, subtitle=APP_SUBTITLE, version=VERSION)
+
+render_active_resume_banner(
+    candidate_name=st.session_state["candidate_file_name"],
+    source_label=st.session_state["source_mode"],
+    word_count=len(resume_text.split()),
+    is_uploaded=st.session_state["is_uploaded"]
+)
+
+with st.expander("📤 Upload & Analyse Your Resume (PDF, DOCX, TXT)", expanded=not st.session_state["is_uploaded"]):
+    u_col1, u_col2 = st.columns([3, 1.2])
+    with u_col1:
+        main_upload = st.file_uploader(
+            "Select Resume File (PDF, DOCX, TXT):",
+            type=["pdf", "docx", "txt"],
+            key="main_resume_uploader_file",
+            help="100% offline analysis. Your document is processed strictly in local memory with zero external cloud calls."
+        )
+    with u_col2:
+        st.write("")
+        st.write("")
+        btn_main_analyze = st.button("🚀 Analyse My Resume", type="primary", use_container_width=True, key="btn_main_analyze")
+
+    if main_upload is not None and (
+        btn_main_analyze or st.session_state.get("last_uploaded_main") != main_upload.name
+    ):
+        extracted_text = ResumeParser.parse_file(main_upload.name, main_upload.read())
+        if extracted_text and not extracted_text.startswith("Error"):
+            st.session_state["resume_text"] = extracted_text
+            st.session_state["candidate_file_name"] = main_upload.name
+            st.session_state["source_mode"] = "Uploaded File"
+            st.session_state["is_uploaded"] = True
+            st.session_state["last_uploaded_main"] = main_upload.name
+            st.success(f"✅ Successfully loaded '{main_upload.name}'! Running full offline AI analysis...")
+            st.rerun()
+        else:
+            st.error(extracted_text)
+
 render_kpis(
     ats_eval=ats_evaluation,
     fit_eval=fit_analysis,

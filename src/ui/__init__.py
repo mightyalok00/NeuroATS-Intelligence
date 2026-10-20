@@ -1,4 +1,5 @@
 from .components import (
+    render_active_resume_banner,
     render_filter_banner,
     render_header,
     render_kpis,
@@ -17,6 +18,7 @@ from .styles import ENTERPRISE_CSS
 
 __all__ = [
     "ENTERPRISE_CSS",
+    "render_active_resume_banner",
     "render_filter_banner",
     "render_header",
     "render_kpis",

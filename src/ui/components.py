@@ -35,6 +35,31 @@ def render_header(title: str, subtitle: str, version: str):
     """, unsafe_allow_html=True)
 
 
+def render_active_resume_banner(
+    candidate_name: str,
+    source_label: str,
+    word_count: int,
+    is_uploaded: bool
+):
+    """Render high-contrast banner showing current candidate resume and provenance."""
+    badge_cls = "active-profile-badge uploaded" if is_uploaded else "active-profile-badge"
+    icon = "📤" if is_uploaded else "⚡"
+    st.markdown(f"""
+    <div class="active-profile-container">
+        <div class="active-profile-meta">
+            <span class="active-profile-label">Current Candidate Under Analysis</span>
+            <div class="active-profile-name">
+                📄 {candidate_name}
+                <span class="{badge_cls}">{icon} {source_label}</span>
+            </div>
+        </div>
+        <div style="font-size:0.8rem; color:#94A3B8; font-family:'JetBrains Mono', monospace;">
+            {word_count:,} words parsed • 100% Offline Local Processing
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+
 def render_filter_banner(
     ats_score: float,
     threshold: int,

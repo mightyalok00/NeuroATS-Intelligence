@@ -217,5 +217,56 @@ ENTERPRISE_CSS = """
         border: 1px solid rgba(168, 85, 247, 0.4);
         color: #D8B4FE;
     }
+
+    /* Active Resume Profile Card & Upload Component */
+    .active-profile-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        border-radius: 14px;
+        padding: 12px 20px;
+        margin-bottom: 1.2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+    .active-profile-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+    .active-profile-label {
+        font-size: 0.75rem;
+        color: #94A3B8;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        font-weight: 600;
+        font-family: var(--font-mono);
+    }
+    .active-profile-name {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #F8FAFC;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .active-profile-badge {
+        font-size: 0.72rem;
+        padding: 3px 10px;
+        border-radius: 9999px;
+        font-family: var(--font-mono);
+        font-weight: 600;
+        background: rgba(99, 102, 241, 0.2);
+        border: 1px solid rgba(99, 102, 241, 0.4);
+        color: #C7D2FE;
+    }
+    .active-profile-badge.uploaded {
+        background: rgba(16, 185, 129, 0.2);
+        border-color: rgba(16, 185, 129, 0.5);
+        color: #6EE7B7;
+    }
 </style>
 """
